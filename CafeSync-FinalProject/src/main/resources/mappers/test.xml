@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ohgiraffers.cafesyncfinalproject.mappers.InventoryMapper">
+
+    <!-- Result Map 정의 -->
+    <resultMap id="InvenResultMap" type="com.ohgiraffers.cafesyncfinalproject.inventory.model.dto.InvenDTO">
+        <id property="invenCode" column="inven_code"/>
+        <result property="invenName" column="inven_name"/>
+        <result property="expirationDate" column="expiration_date"/>
+        <result property="invenImage" column="inven_image"/>
+        <result property="venCode" column="ven_code"/>
+    </resultMap>
+
+    <!-- Select Example -->
+    <select id="findAllInvenList" resultMap="InvenResultMap">
+        SELECT
+        inven_code,
+        inven_name,
+        expiration_date,
+        inven_image,
+        ven_code
+        FROM tbl_inventory
+    </select>
+</mapper>
