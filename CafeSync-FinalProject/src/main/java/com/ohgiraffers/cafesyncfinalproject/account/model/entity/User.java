@@ -17,13 +17,13 @@ public class User {
     @Column(name = "user_id")
     private String userId;
 
-    @Column(name = "user_pass")
+    @Column(name = "user_pass", nullable = false)
     private String userPass;
 
     @Column(name = "emp_code")
-    private int empCode;
+    private int empCode; // Employee 객체로 참조
 
-    @Column(name = "email")
+    @Column(name = "email", length = 255)
     private String email;
 
     @Convert(converter = Role.RoleConverter.class) // ✅ Enum을 숫자로 변환
