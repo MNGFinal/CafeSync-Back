@@ -1,4 +1,4 @@
-package com.ohgiraffers.cafesyncfinalproject.notice;
+package com.ohgiraffers.cafesyncfinalproject.notice.controller;
 
 public class Controller {
 }
