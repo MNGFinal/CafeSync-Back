@@ -1,8 +1,8 @@
 ---
-name: "\U0001F41E버그 및 이슈 제보\U0001F41E"
+name: bug_report
 about: 버그 및 이슈 제보 템플릿
 title: "예시) \U0001F41E버그 - [25.01.01] 게시판 조회 버그"
-labels: "\U0001F41E버그\U0001F41E"
+labels: "\U0001F41E버그\U0001F41E, \U0001F519백엔드\U0001F519"
 assignees: ''
 
 ---
