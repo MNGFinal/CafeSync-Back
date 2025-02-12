@@ -1,12 +1,16 @@
 package com.ohgiraffers.cafesyncfinalproject.menu.controller;
 
+import com.ohgiraffers.cafesyncfinalproject.menu.model.dto.MenuDTO;
 import com.ohgiraffers.cafesyncfinalproject.menu.model.service.MenuService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/menu")
@@ -14,6 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class MenuController {
 
     private final MenuService menuService;
+
+    @GetMapping("list")
+    public String menuList(Model model) {
+        List<MenuDTO> menuList = menuService.menuList();
+
+        model.addAttribute("result", menuList);
+
+        System.out.println("메뉴 들왔니?" + menuList);
+
+        return "menu/detail";
+
+
+    }
 
 
 
