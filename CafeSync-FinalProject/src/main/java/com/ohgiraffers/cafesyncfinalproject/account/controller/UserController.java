@@ -52,7 +52,7 @@ public class UserController {
     )
     @PostMapping("/register")
     public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO) {
-        System.out.println("userDTO = " + userDTO);
+//        System.out.println("userDTO = " + userDTO);
         UserDTO savedUser = userService.registerUser(userDTO);
         return ResponseEntity.ok(savedUser);
     }
@@ -69,7 +69,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody UserDTO userDTO) {
 
-        System.out.println("userDTO = " + userDTO);
+//        System.out.println("userDTO = " + userDTO);
 
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -85,7 +85,7 @@ public class UserController {
 
             UserLoginDTO user = userService.findUserLoginDetails(userDTO.getUserId());
 
-            System.out.println("user = " + user);
+//            System.out.println("user = " + user);
 
             Map<String, Object> response = new HashMap<>();
             response.put("accessToken", accessToken);
