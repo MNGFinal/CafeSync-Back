@@ -6,9 +6,11 @@ import com.ohgiraffers.cafesyncfinalproject.account.model.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-// 사용자 정보를 가져오는 서비스
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -17,7 +19,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        User user = userRepository.findByUserId(username);
+        Optional<User> userOptional = Optional.ofNullable(userRepository.findByUserId(username));
+
+        // ✅ 사용자 없을 경우 예외 처리
+        User user = userOptional.orElseThrow(() ->
+                new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username)
+        );
 
         return new UserDetailsImpl(user);
     }
