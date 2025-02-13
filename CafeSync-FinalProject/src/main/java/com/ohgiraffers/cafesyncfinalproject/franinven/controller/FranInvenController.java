@@ -27,3 +27,4 @@ public class FranInvenController {
         return list;
     }
 }
+
