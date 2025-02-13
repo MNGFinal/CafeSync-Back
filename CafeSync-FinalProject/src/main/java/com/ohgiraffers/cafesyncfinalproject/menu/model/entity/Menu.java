@@ -17,7 +17,7 @@ public class Menu {
     @Id
     @Column(name = "menu_code")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int MenuCode;
+    private int menuCode;
 
     @Column(name = "menu_name_ko")
     private String menuNameKo;      // 메뉴 이름(한글)
@@ -42,5 +42,4 @@ public class Menu {
 
     @Column(name = "season_menu")
     private int seasonMenu;         // 시즌 메뉴
-
 }

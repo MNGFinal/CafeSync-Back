@@ -11,11 +11,7 @@ import lombok.*;
 @ToString
 public class CategoryDTO {
 
-    @Id
-    @Column(name = "category_code")
     private int categoryCode;
-
-    @Column(name = "category_name")
     private String categoryName;
 
 }

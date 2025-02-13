@@ -52,25 +52,25 @@ public class SecurityConfig {
                 .cors(cors -> {}) // CORS 설정 활성화
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 비활성화 (JWT 사용)
                 .authorizeHttpRequests(auth -> auth
-                        // ✅ Swagger UI 관련 경로 허용
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/swagger-resources/**",
-                                "/webjars/**"
-                        ).permitAll()
+                                // ✅ Swagger UI 관련 경로 허용
+                                .requestMatchers(
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**",
+                                        "/swagger-resources/**",
+                                        "/webjars/**"
+                                ).permitAll()
 
-                        // ✅ 로그인 & 회원가입은 누구나 접근 가능
-                        .requestMatchers("/api/login", "/api/register", "/api/find-id/**", "/api/find-pass/**").permitAll()
+                                // ✅ 로그인 & 회원가입은 누구나 접근 가능
+                                .requestMatchers("/api/login", "/api/register", "/api/find-id/**", "/api/find-pass/**", "/api/fran/**").permitAll()
 
-                        // ✅ 권한 설정
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // 관리자만 접근 가능
-                        .requestMatchers("/api/user/**").hasRole("USER") // 사용자만 접근 가능
-                        .requestMatchers("/api/fran/**").hasAnyRole("ADMIN", "USER") // ADMIN, USER 둘 다 접근 가능
-                        .requestMatchers("/api/hq/**").hasRole("ADMIN") // 본사는 ADMIN만 접근 가능
+                                // ✅ 권한 설정
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN") // 관리자만 접근 가능
+                                .requestMatchers("/api/user/**").hasRole("USER") // 사용자만 접근 가능
+//                        .requestMatchers("/api/fran/**").hasAnyRole("ADMIN", "USER") // ADMIN, USER 둘 다 접근 가능
+                                .requestMatchers("/api/hq/**").hasRole("ADMIN") // 본사는 ADMIN만 접근 가능
 
-                        // ✅ 나머지 모든 요청은 로그인해야 접근 가능
-                        .anyRequest().authenticated()
+                                // ✅ 나머지 모든 요청은 로그인해야 접근 가능
+                                .anyRequest().authenticated()
                 )
                 // ✅ JWT 필터 등록
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userDetailsService),

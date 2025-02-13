@@ -2,9 +2,9 @@ package com.ohgiraffers.cafesyncfinalproject.menu.model.dao;
 
 import com.ohgiraffers.cafesyncfinalproject.menu.model.entity.Menu;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
+import java.util.List;
 
-@Repository
 public interface MenuRepository extends JpaRepository<Menu, Integer> {
+    List<Menu> findByCategoryCode(int categoryCode);
 }

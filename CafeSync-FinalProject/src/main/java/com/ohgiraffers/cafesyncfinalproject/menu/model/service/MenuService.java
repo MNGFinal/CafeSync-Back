@@ -17,16 +17,16 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final ModelMapper modelMapper;
 
-    public List<MenuDTO> menuList() {
+    public List<MenuDTO> getMenusByCategory(int categoryCode) {
 
-        List<Menu> menuList = menuRepository.findAll();
+        System.out.println("categoryCode = " + categoryCode);
 
-        System.out.println("메뉴 들왔니?" + menuList);
+        List<Menu> menuList = menuRepository.findByCategoryCode(categoryCode);
 
+        System.out.println("서버에서 넘어온 데이터 = " + menuList);
 
-        return menuList.stream().map(menu -> modelMapper.map(menu, MenuDTO.class)).collect(Collectors.toList());
-
-
-
+        return menuList.stream()
+                .map(menu -> modelMapper.map(menu, MenuDTO.class))
+                .collect(Collectors.toList());
     }
 }
