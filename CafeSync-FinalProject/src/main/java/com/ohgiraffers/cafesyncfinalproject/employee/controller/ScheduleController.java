@@ -20,6 +20,7 @@ public class ScheduleController {
 
     @GetMapping("/regist/{franCode}")
     public ResponseEntity<List<ScheduleDTO>> getSchedulesByFranCode(@PathVariable int franCode) {
+        System.out.println("franCode = " + franCode);
         List<ScheduleDTO> schedules = scheduleService.getSchedulesByFranCode(franCode);
         return ResponseEntity.ok(schedules);
     }
