@@ -42,18 +42,18 @@ public class UserService {
 
     public UserLoginDTO findUserLoginDetails(String userId) {
 
-        System.out.println("userId = " + userId);
+//        System.out.println("userId = " + userId);
 
         List<Object[]> result = userRepository.findUserLoginDetails(userId);
 
-        System.out.println("result = " + result);
+//        System.out.println("result = " + result);
 
         if (result.isEmpty()) {
             throw new UsernameNotFoundException("사용자 정보를 찾을 수 없습니다.");
         }
 
         Object[] row = result.get(0);
-        System.out.println("🔹 로그인 데이터 확인: " + Arrays.deepToString(row));
+//        System.out.println("🔹 로그인 데이터 확인: " + Arrays.deepToString(row));
 
         // ✅ Employee 객체 생성
         EmployeeDTO employeeDTO = new EmployeeDTO();
