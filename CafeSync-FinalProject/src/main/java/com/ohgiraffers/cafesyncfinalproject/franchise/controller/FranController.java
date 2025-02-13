@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/fran")
+@RequestMapping("/api/hq")
 public class FranController {
 
     public final FranService franService;
@@ -23,13 +23,10 @@ public class FranController {
 
         List<FranDTO> franList = franService.findAllFran();
 
+        System.out.println("franList컨트롤러단 = " + franList);
 
 
-
-
-
-
-        return null;
+        return franList;
     }
 
 

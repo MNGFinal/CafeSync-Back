@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,9 +23,11 @@ public class FranService {
 
         List<Fran> franList = franRepository.findAll();
 
+        System.out.println("프랜차이즈 리스트 = " + franList);
 
-
-        return null;
+        return franList.stream()
+                .map(fran -> modelMapper.map(fran, FranDTO.class))
+                .collect(Collectors.toList());
 
     }
 }
