@@ -23,7 +23,7 @@ public class MenuController {
 
         List<MenuDTO> menuList = menuService.getMenusByCategory(categoryCode);
 
-        System.out.println("menuList = " + menuList);
+        System.out.println("제발!!!! = " + menuList);
 
         return menuList;
     }
