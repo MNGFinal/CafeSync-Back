@@ -2,6 +2,7 @@ package com.ohgiraffers.cafesyncfinalproject.account.controller;
 
 import com.ohgiraffers.cafesyncfinalproject.account.model.dto.UserDTO;
 import com.ohgiraffers.cafesyncfinalproject.account.model.entity.User;
+import com.ohgiraffers.cafesyncfinalproject.account.model.dto.UserLoginDTO;
 import com.ohgiraffers.cafesyncfinalproject.account.model.service.UserService;
 import com.ohgiraffers.cafesyncfinalproject.config.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,6 +68,9 @@ public class UserController {
     )
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody UserDTO userDTO) {
+
+        System.out.println("userDTO = " + userDTO);
+
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userDTO.getUserId(), userDTO.getUserPass())
@@ -79,20 +83,21 @@ public class UserController {
 
             redisTemplate.opsForValue().set("refresh:" + userDTO.getUserId(), refreshToken, REFRESH_TOKEN_EXPIRATION, TimeUnit.MILLISECONDS);
 
-            User user = userService.findUserById(userDTO.getUserId());
+            UserLoginDTO user = userService.findUserLoginDetails(userDTO.getUserId());
+
+            System.out.println("user = " + user);
 
             Map<String, Object> response = new HashMap<>();
             response.put("accessToken", accessToken);
             response.put("refreshToken", refreshToken);
-            response.put("authority", user.getAuthority());
-            response.put("jobCode", user.getJobCode());
-            response.put("storeCode", user.getStoreCode());
+            response.put("user", user); // ✅ UserLoginDTO로 반환!
 
-            return ResponseEntity.ok(response); // ✅ 응답 반환
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", "로그인 실패"));
         }
     }
+
 
     // ✅ Refresh Token을 이용한 Access Token 재발급 (세션 방식)
     @Operation(
@@ -156,9 +161,12 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
         response.put("userId", user.getUserId());
         response.put("authority", user.getAuthority());
+        response.put("email", user.getEmail());
+        response.put("empCode", user.getEmpCode());
         response.put("jobCode", user.getJobCode());
         response.put("storeCode", user.getStoreCode());
 
         return ResponseEntity.ok(response);
     }
 }
+
