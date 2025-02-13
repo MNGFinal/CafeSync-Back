@@ -64,10 +64,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/login", "/api/register", "/api/find-id/**", "/api/find-pass/**").permitAll()
 
                         // ✅ 권한 설정
-                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN") // 관리자만 접근 가능
-                        .requestMatchers("/api/user/**").hasAuthority("USER") // 사용자만 접근 가능
-                        .requestMatchers("/api/fran/**").hasAnyAuthority("ADMIN", "USER") // ADMIN, USER 둘 다 접근 가능
-                        .requestMatchers("/api/hq/**").hasAuthority("ADMIN") // 본사는 ADMIN만 접근 가능
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // 관리자만 접근 가능
+                        .requestMatchers("/api/user/**").hasRole("USER") // 사용자만 접근 가능
+                        .requestMatchers("/api/fran/**").hasAnyRole("ADMIN", "USER") // ADMIN, USER 둘 다 접근 가능
+                        .requestMatchers("/api/hq/**").hasRole("ADMIN") // 본사는 ADMIN만 접근 가능
 
                         // ✅ 나머지 모든 요청은 로그인해야 접근 가능
                         .anyRequest().authenticated()
