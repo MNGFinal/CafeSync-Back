@@ -1,6 +1,5 @@
 package com.ohgiraffers.cafesyncfinalproject.config;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -64,10 +63,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/login", "/api/register", "/api/find-id/**", "/api/find-pass/**").permitAll()
 
                         // ✅ 권한 설정
-                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN") // 관리자만 접근 가능
-                        .requestMatchers("/api/user/**").hasAuthority("USER") // 사용자만 접근 가능
-                        .requestMatchers("/api/fran/**").hasAnyAuthority("ADMIN", "USER") // ADMIN, USER 둘 다 접근 가능
-                        .requestMatchers("/api/hq/**").hasAuthority("ADMIN") // 본사는 ADMIN만 접근 가능
+                        .requestMatchers("/api/admin/**").hasAuthority("1") // 관리자만 접근 가능
+                        .requestMatchers("/api/user/**").hasAuthority("2") // 사용자만 접근 가능
+                        .requestMatchers("/api/fran/**").hasAnyAuthority("1", "2") // ADMIN, USER 둘 다 접근 가능
+                        .requestMatchers("/api/hq/**").hasAuthority("1") // 본사는 ADMIN만 접근 가능
 
                         // ✅ 나머지 모든 요청은 로그인해야 접근 가능
                         .anyRequest().authenticated()
@@ -78,4 +77,8 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+
+
+
 }

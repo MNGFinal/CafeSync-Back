@@ -67,6 +67,8 @@ public class UserController {
     )
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody UserDTO userDTO) {
+
+        System.out.println("로그인 정보 = " + userDTO);
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userDTO.getUserId(), userDTO.getUserPass())
