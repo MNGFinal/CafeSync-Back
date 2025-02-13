@@ -11,7 +11,7 @@ import lombok.*;
 @ToString
 public class CategoryDTO {
 
-    private int categoryCode;
-    private String categoryName;
+    private int categoryCode;     // 카테고리 코드
+    private String categoryName;  // 카테고리 이름
 
 }
