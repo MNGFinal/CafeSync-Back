@@ -25,3 +25,17 @@ spring:
 
   jwt:
     secret: "${JWT_SECRET:default-secret-key-should-be-changed}"
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: keunhee0920
+    password: skihjgwiladoidha
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true   # ✅ STARTTLS 활성화
+            required: true # ✅ STARTTLS 필수 적용
+        debug: true  # 디버깅 활성화 (개발용)
