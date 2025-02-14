@@ -60,19 +60,13 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // ✅ 로그인 & 회원가입은 누구나 접근 가능
-<<<<<<< HEAD
-                        .requestMatchers("/api/login", "/api/register", "/api/find-id/**", "/api/find-pass/**", "/api/fran/**").permitAll()
-=======
+
                         .requestMatchers("/api/login", "/api/register", "/api/find-id/**", "/api/find-pass/**", "/api/fran/**", "/api/hq/**").permitAll()
->>>>>>> 4bd4616ed70394e33a72246adf485ae86ff4efb2
+
 
                         // ✅ 권한 설정
                         .requestMatchers("/api/admin/**").hasRole("ADMIN") // 관리자만 접근 가능
                         .requestMatchers("/api/user/**").hasRole("USER") // 사용자만 접근 가능
-<<<<<<< HEAD
-                        .requestMatchers("/api/hq/**").hasRole("ADMIN") // 본사는 ADMIN만 접근 가능
-=======
->>>>>>> 4bd4616ed70394e33a72246adf485ae86ff4efb2
 
                         // ✅ 나머지 모든 요청은 로그인해야 접근 가능
                         .anyRequest().authenticated()

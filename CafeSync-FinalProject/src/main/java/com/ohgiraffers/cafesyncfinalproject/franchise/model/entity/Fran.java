@@ -20,19 +20,19 @@ public class Fran {
     private int franCode;
 
     @Column(name = "fran_name")
-    private int franName;
+    private String franName;
 
     @Column(name = "fran_addr")
-    private int franAddr;
+    private String franAddr;
 
     @Column(name = "fran_phone")
-    private int franPhone;
+    private String franPhone;
 
     @Column(name = "fran_image")
-    private int franImage;
+    private String franImage;
 
     @Column(name = "memo")
-    private int memo;
+    private String memo;
 
     @Column(name = "emp_code")
     private int empCode;
