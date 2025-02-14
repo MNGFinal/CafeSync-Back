@@ -42,11 +42,7 @@ public class UserService {
 
     public UserLoginDTO findUserLoginDetails(String userId) {
 
-        System.out.println("userId = " + userId);
-
         List<Object[]> result = userRepository.findUserLoginDetails(userId);
-
-        System.out.println("result = " + result);
 
         if (result.isEmpty()) {
             throw new UsernameNotFoundException("사용자 정보를 찾을 수 없습니다.");
