@@ -16,6 +16,7 @@ public class ScheduleController {
 
     public final ScheduleService scheduleService;
 
+    // 스케줄 전체 조회 - 가맹점별
     @GetMapping("/schedule/{franCode}")
     public List<ScheduleDTO> getSchedulesByFranCode(@PathVariable int franCode) {
         System.out.println("schedule franCode = " + franCode);
@@ -23,5 +24,14 @@ public class ScheduleController {
         System.out.println("스케줄 컨트롤러 schedules = " + schedules);
         return schedules;
     }
+
+    // 스케줄 구분별 조회 - 가맹점&날짜별
+//    @GetMapping("/schedule/monthly/{franCode}")
+//    public List<ScheduleDTO> getSchedulesWithDivisionsByFranCode(@PathVariable int franCode) {
+//        System.out.println("컨트롤러 날짜별 조회시 franCode = " + franCode);
+//        List <ScheduleDTO> monthlySchedules = scheduleService.findSchedulesWithDivisionsByFranCode(franCode);
+//        System.out.println("monthlySchedules = " + monthlySchedules);
+//        return monthlySchedules;
+//    }
 
 }
