@@ -52,7 +52,7 @@ public class UserController {
     )
     @PostMapping("/register")
     public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO) {
-        System.out.println("userDTO = " + userDTO);
+//        System.out.println("userDTO = " + userDTO);
         UserDTO savedUser = userService.registerUser(userDTO);
         return ResponseEntity.ok(savedUser);
     }
@@ -71,6 +71,7 @@ public class UserController {
 
         System.out.println("userDTO = " + userDTO);
 
+
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userDTO.getUserId(), userDTO.getUserPass())
@@ -81,11 +82,16 @@ public class UserController {
             String accessToken = jwtUtil.generateToken(userDTO.getUserId(), ACCESS_TOKEN_EXPIRATION);
             String refreshToken = jwtUtil.generateToken(userDTO.getUserId(), REFRESH_TOKEN_EXPIRATION);
 
+            System.out.println("refreshToken = " + refreshToken);
+            System.out.println("accessToken = " + accessToken);
+
             redisTemplate.opsForValue().set("refresh:" + userDTO.getUserId(), refreshToken, REFRESH_TOKEN_EXPIRATION, TimeUnit.MILLISECONDS);
 
             UserLoginDTO user = userService.findUserLoginDetails(userDTO.getUserId());
 
             System.out.println("user = " + user);
+
+//            System.out.println("user = " + user);
 
             Map<String, Object> response = new HashMap<>();
             response.put("accessToken", accessToken);
@@ -94,6 +100,7 @@ public class UserController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            e.printStackTrace(); // ✅ 예외 메시지 확인
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", "로그인 실패"));
         }
     }
