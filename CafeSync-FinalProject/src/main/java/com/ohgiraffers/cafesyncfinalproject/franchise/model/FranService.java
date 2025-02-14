@@ -28,6 +28,5 @@ public class FranService {
         return franList.stream()
                 .map(fran -> modelMapper.map(fran, FranDTO.class))
                 .collect(Collectors.toList());
-
     }
 }

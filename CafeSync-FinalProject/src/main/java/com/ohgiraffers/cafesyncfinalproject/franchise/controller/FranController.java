@@ -25,9 +25,7 @@ public class FranController {
 
         System.out.println("franList컨트롤러단 = " + franList);
 
-
         return franList;
     }
-
 
 }
