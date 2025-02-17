@@ -27,4 +27,21 @@ public class MenuController {
 
         return menuList;
     }
+
+    // Sold Out 기능
+    @PutMapping("/menus/{menuCode}")
+    public MenuDTO menuSold(@PathVariable("menuCode") int menuCode) {
+
+        System.out.println("프론트에서 넘어온 메뉴코드 = " + menuCode);
+
+        MenuDTO menuSoldOut = menuService.menuSold(menuCode);
+
+        System.out.println("menuSoldOut = " + menuSoldOut);
+
+        return menuSoldOut;
+    }
+
+
+
+
 }
