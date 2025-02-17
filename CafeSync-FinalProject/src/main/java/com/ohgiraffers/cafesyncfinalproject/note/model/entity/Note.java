@@ -24,7 +24,6 @@ public class Note {
     private String noteTitle;
 
     @Column(name = "note_date")
-    @JsonFormat(pattern = "yyyy-MM-dd a HH:mm:ss")
     private LocalDateTime noteDate;
 
     @Column(name = "note_detail")
@@ -33,6 +32,7 @@ public class Note {
     @Column(name = "attchment")
     private String attachment;
 
-    @Column(name = "user_id")
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+    private Account account;
 }

@@ -32,9 +32,12 @@ public class NoteService {
                         note.getNoteDate(),
                         note.getNoteDetail(),
                         note.getAttachment(),
-                        note.getUserId()))
+                        (note.getAccount() != null) ? note.getAccount().getUserId() : null, // account에서 userId 가져오기
+                        (note.getAccount() != null && note.getAccount().getEmployee() != null) ?
+                                note.getAccount().getEmployee().getEmpName() : null))  // empName 가져오기
                 .collect(Collectors.toList());
     }
+
 
     public NoteDTO selectNoteByNoteCode(int noteCode) {
         Note note = noteRepository.findById(noteCode).get();

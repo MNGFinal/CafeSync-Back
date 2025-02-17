@@ -17,4 +17,5 @@ public class NoteDTO {
     private String noteDetail;
     private String attachment;
     private String userId;
+    private String empName;
 }
