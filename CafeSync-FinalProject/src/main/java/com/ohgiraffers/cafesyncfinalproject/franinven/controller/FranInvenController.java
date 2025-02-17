@@ -14,15 +14,11 @@ public class FranInvenController {
 
     private final FranInvenService franInvenService;
 
-    // 특정 가맹점의 재고 목록 조회
+    // 로그인한 가맹점의 재고 목록 조회
     @GetMapping("/inven/{franCode}")
     public List<FranInvenDTO> getInventoryByFranCode(@PathVariable int franCode) {
 
-        System.out.println("franCode = " + franCode);
-
         List<FranInvenDTO> list = franInvenService.findByFranCode(franCode);
-
-        System.out.println("list = " + list);
 
         return list;
     }
