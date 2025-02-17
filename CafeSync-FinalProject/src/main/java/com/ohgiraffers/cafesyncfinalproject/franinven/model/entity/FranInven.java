@@ -35,8 +35,9 @@ public class FranInven {
     @Column(name = "confirmed", columnDefinition = "TINYINT(1)")
     private int confirmed; // 확인 여부 (0 또는 1)
 
-    @Column(name = "inven_code", length = 255, nullable = false)
-    private String invenCode; // 재고 코드
+    @ManyToOne(fetch = FetchType.LAZY) // ✅ ManyToOne 설정 (연관 관계 추가)
+    @JoinColumn(name = "inven_code", referencedColumnName = "inven_code", nullable = false)
+    private Inventory inventory; // ✅ Inventory 객체 추가
 
     @Column(name = "fran_code", nullable = false)
     private int franCode; // 가맹점 코드

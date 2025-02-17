@@ -1,5 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.franinven.model.dto;
 
+import com.ohgiraffers.cafesyncfinalproject.inventory.model.dto.InvenDTO;
 import lombok.*;
 
 import java.util.Date;
@@ -17,6 +18,6 @@ public class FranInvenDTO {
     private int recommQty; // 권장 수량
     private Date lastIn; // 최근 입고 일자
     private int confirmed; // 확인 여부 (0 또는 1로 저장)
-    private String invenCode; // 재고 코드
+    private InventoryDTO inventory;
     private int franCode; // 가맹점 코드
 }
