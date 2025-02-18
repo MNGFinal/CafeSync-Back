@@ -2,12 +2,14 @@ package com.ohgiraffers.cafesyncfinalproject.note.controller;
 
 import com.ohgiraffers.cafesyncfinalproject.common.ResponseDTO;
 import com.ohgiraffers.cafesyncfinalproject.note.model.dto.NoteDTO;
+import com.ohgiraffers.cafesyncfinalproject.note.model.entity.Note;
 import com.ohgiraffers.cafesyncfinalproject.note.model.service.NoteService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -45,5 +47,12 @@ public class NoteController {
 
         return ResponseEntity
                 .ok().body(new ResponseDTO(HttpStatus.OK, "노트 검색 성공", noteService.selectNoteBySearch(search)));
+    }
+
+    @Tag(name = "노트 등록", description = "새로운 노트 등록")
+    @PostMapping("/notes")
+    public ResponseEntity<ResponseDTO> insertNote(@RequestBody NoteDTO noteDTO) {
+        return ResponseEntity.ok()
+                .body(new ResponseDTO(HttpStatus.OK, "노트 등록 성공", noteService.insertNote(noteDTO)));
     }
 }

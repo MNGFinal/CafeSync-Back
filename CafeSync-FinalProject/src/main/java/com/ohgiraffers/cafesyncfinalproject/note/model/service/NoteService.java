@@ -59,4 +59,15 @@ public class NoteService {
 
         return noteDTOList;
     }
+
+    public Note insertNote(NoteDTO noteDTO) {
+        // DTO -> Entity 변환
+        Note note = new Note();
+        note.setNoteTitle(noteDTO.getNoteTitle());
+        note.setNoteDate(noteDTO.getNoteDate());
+        note.setNoteDetail(noteDTO.getNoteDetail());
+        note.setAttachment(noteDTO.getAttachment());
+
+        return noteRepository.save(note);
+    }
 }
