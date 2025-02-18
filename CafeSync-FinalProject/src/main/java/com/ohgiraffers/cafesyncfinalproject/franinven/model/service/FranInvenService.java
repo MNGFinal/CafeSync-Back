@@ -38,6 +38,7 @@ public class FranInvenService {
                 .collect(Collectors.toList());
     }
 
+    // 재고 수량 업데이트
     @Transactional
     public void invenUpdate(List<FranInvenDTO> request) {
         // 1️⃣ 요청에서 PK(franInvenCode) 값만 추출
@@ -60,5 +61,16 @@ public class FranInvenService {
         });
 
         // 4️⃣ Dirty Checking으로 자동 업데이트! (saveAll() 필요 없음)
+    }
+
+    // 재고 데이터 삭제
+    @Transactional
+    public void invenDelete(List<FranInvenDTO> request) {
+        List<Integer> franInvenCodes = request.stream()
+                .map(FranInvenDTO::getFranInvenCode)
+                .collect(Collectors.toList());
+
+        // ✅ JPA 기본 제공 deleteAllByIdInBatch() 사용!
+        franInvenRepository.deleteAllByIdInBatch(franInvenCodes);
     }
 }

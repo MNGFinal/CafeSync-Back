@@ -24,16 +24,26 @@ public class FranInvenController {
         return list;
     }
 
+    // 재고 수량 업데이트
     @PutMapping("/inven/update")
     public ResponseEntity<String> invenUpdate(@RequestBody List<FranInvenDTO> request) {
-
-        System.out.println("📥 받은 요청 데이터: " + request);
 
         // 1️⃣ 서비스 호출 → 재고 업데이트 수행
         franInvenService.invenUpdate(request);
 
         // 2️⃣ 성공 응답 반환
         return ResponseEntity.ok("재고 업데이트 성공");
+    }
+
+    // 재고 목록 삭제
+    @DeleteMapping("/inven/delete")
+    public ResponseEntity<String> invenDelete(@RequestBody List<FranInvenDTO> request) {
+
+        System.out.println("삭제할 데이터 목록 = " + request);
+
+        franInvenService.invenDelete(request);
+
+        return ResponseEntity.ok("삭제 성공");
     }
 }
 
