@@ -1,14 +1,12 @@
 package com.ohgiraffers.cafesyncfinalproject.note.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
 public class AccountDTO {
 
     private String userId;

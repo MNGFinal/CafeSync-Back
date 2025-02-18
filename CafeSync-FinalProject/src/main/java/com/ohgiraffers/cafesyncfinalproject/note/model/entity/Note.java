@@ -29,7 +29,7 @@ public class Note {
     @Column(name = "note_detail")
     private String noteDetail;
 
-    @Column(name = "attchment")
+    @Column(name = "attachment")
     private String attachment;
 
     @ManyToOne(fetch = FetchType.LAZY)
