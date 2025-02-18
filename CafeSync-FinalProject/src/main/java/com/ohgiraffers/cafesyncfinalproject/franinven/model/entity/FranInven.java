@@ -10,7 +10,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
 @ToString
 public class FranInven {
 
@@ -41,4 +40,10 @@ public class FranInven {
 
     @Column(name = "fran_code", nullable = false)
     private int franCode; // 가맹점 코드
+
+    public void updateStock(int stockQty, int orderQty, int recommQty) {
+        this.stockQty = stockQty;
+        this.orderQty = orderQty;
+        this.recommQty = recommQty;
+    }
 }
