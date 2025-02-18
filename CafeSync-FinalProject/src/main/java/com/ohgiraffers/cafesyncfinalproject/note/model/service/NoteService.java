@@ -44,4 +44,19 @@ public class NoteService {
         NoteDTO noteDTO = modelMapper.map(note,NoteDTO.class);
         return noteDTO;
     }
+
+    public List<NoteDTO> selectNoteBySearch(String search) {
+        List<Note> noteListWithSearchValue = noteRepository.findByNoteTitleContaining(search);
+
+        List<NoteDTO> noteDTOList = noteListWithSearchValue.stream()
+                .map(note -> {
+                    NoteDTO noteDTO = modelMapper.map(note, NoteDTO.class);
+                    noteDTO.setUserId(note.getAccount().getUserId());  // Account의 userId 설정
+                    noteDTO.setEmpName(note.getAccount().getEmployee().getEmpName());  // Account의 empName 설정
+                    return noteDTO;
+                })
+                .collect(Collectors.toList());
+
+        return noteDTOList;
+    }
 }
