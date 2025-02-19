@@ -25,7 +25,7 @@ public class ScheduleService {
         return schedules.stream()
                 .map(schedule -> {
                     ScheduleDTO scheduleDTO = modelMapper.map(schedule, ScheduleDTO.class);
-                    scheduleDTO.setEmpName(schedule.getEmployee().getEmpName());
+//                    scheduleDTO.setEmpName(schedule.getEmployee().getEmpName());
 //                    System.out.println("scheduleDTO = " + scheduleDTO);
                     return scheduleDTO;
                 })
