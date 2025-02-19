@@ -1,9 +1,7 @@
 package com.ohgiraffers.cafesyncfinalproject.note.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Note {
+public class NoteInsert {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +23,6 @@ public class Note {
     private String noteTitle;
 
     @Column(name = "note_date")
-    @CreationTimestamp
     private LocalDateTime noteDate;
 
     @Column(name = "note_detail")
@@ -34,7 +31,6 @@ public class Note {
     @Column(name = "attachment")
     private String attachment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
-    private Account account;
+    @Column(name = "user_id")
+    private String userId;
 }
