@@ -1,5 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.schedule.model.dto;
 
+import com.ohgiraffers.cafesyncfinalproject.employee.model.dto.EmployeeDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -27,4 +28,7 @@ public class ScheduleDTO {
 
     @Schema(description = "가맹점 코드")
     private int franCode;
+
+    @Schema(description = "직원 정보")
+    private EmployeeDTO employeeDTO;
 }
