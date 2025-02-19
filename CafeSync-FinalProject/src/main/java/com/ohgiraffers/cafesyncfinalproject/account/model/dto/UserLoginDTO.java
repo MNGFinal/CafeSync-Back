@@ -1,5 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.account.model.dto;
 
+import com.ohgiraffers.cafesyncfinalproject.employee.model.dto.EmployeeDTO;
 import lombok.*;
 
 @NoArgsConstructor
