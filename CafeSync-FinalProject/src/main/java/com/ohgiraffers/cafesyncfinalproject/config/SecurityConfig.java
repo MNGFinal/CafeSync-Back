@@ -63,7 +63,6 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/login", "/api/register", "/api/find-id/**", "/api/find-pass/**", "/api/fran/**", "/api/hq/**").permitAll()
 
-
                         // ✅ 권한 설정
                         .requestMatchers("/api/admin/**").hasRole("ADMIN") // 관리자만 접근 가능
                         .requestMatchers("/api/user/**").hasRole("USER") // 사용자만 접근 가능
