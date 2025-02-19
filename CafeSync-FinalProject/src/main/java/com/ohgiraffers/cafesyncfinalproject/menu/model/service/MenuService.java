@@ -20,8 +20,8 @@ public class MenuService {
     private final ModelMapper modelMapper;
     private final FirebaseStorageService firebaseStorageService;
 
-    public List<MenuDTO> getMenusByCategory(int categoryCode) {
-        List<Menu> menuList = menuRepository.findByCategoryCode(categoryCode);
+    public List<MenuDTO> getMenusByCategory(int categoryCode, String query) {
+        List<Menu> menuList = menuRepository.findByCategoryCodeAndMenuName(categoryCode, query);
 
         return menuList.stream()
                 .map(menu -> {
