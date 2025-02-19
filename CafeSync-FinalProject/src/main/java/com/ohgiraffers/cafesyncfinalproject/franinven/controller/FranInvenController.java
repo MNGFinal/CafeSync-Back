@@ -1,7 +1,10 @@
 package com.ohgiraffers.cafesyncfinalproject.franinven.controller;
 
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.FranInvenDTO;
+import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.InOutDTO;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.service.FranInvenService;
+import com.ohgiraffers.cafesyncfinalproject.franinven.model.service.InOutService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +17,7 @@ import java.util.List;
 public class FranInvenController {
 
     private final FranInvenService franInvenService;
+    private final InOutService inOutService;
 
     // 로그인한 가맹점의 재고 목록 조회
     @GetMapping("/inven/{franCode}")
@@ -44,6 +48,17 @@ public class FranInvenController {
         franInvenService.invenDelete(request);
 
         return ResponseEntity.ok("삭제 성공");
+    }
+
+    // ✅ 특정 가맹점의 입출고 내역 조회 (네이티브 쿼리 기반)
+    @GetMapping("/inout/list/{franCode}")
+    public ResponseEntity<List<InOutDTO>> getInOutList(@PathVariable("franCode") int franCode) {
+
+        System.out.println("franCode = " + franCode);
+
+        List<InOutDTO> inOutList = inOutService.getInOutList(franCode);
+
+        return ResponseEntity.ok(inOutList);
     }
 }
 
