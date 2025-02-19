@@ -54,5 +54,5 @@ public class Employee {
     private int salary;
 
     @Column(name = "fran_code")
-    private int franCode;
+    private Integer franCode;
 }

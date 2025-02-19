@@ -23,7 +23,12 @@ public class ScheduleService {
         System.out.println("스케줄 서비스 단의 schedules = " + schedules);
 
         return schedules.stream()
-                .map(schedule -> modelMapper.map(schedule, ScheduleDTO.class))
+                .map(schedule -> {
+                    ScheduleDTO scheduleDTO = modelMapper.map(schedule, ScheduleDTO.class);
+                    scheduleDTO.setEmpName(schedule.getEmployee().getEmpName());
+//                    System.out.println("scheduleDTO = " + scheduleDTO);
+                    return scheduleDTO;
+                })
                 .collect(Collectors.toList());
     }
 
