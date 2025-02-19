@@ -29,6 +29,10 @@ public class ScheduleDTO {
     @Schema(description = "가맹점 코드")
     private int franCode;
 
-    @Schema(description = "직원 정보")
-    private EmployeeDTO employeeDTO;
+
+    // JOIN
+//    @Schema(description = "직원 정보")
+//    private EmployeeDTO employeeDTO;
+    @Schema(description = "직원 이름")
+    private String empName;
 }

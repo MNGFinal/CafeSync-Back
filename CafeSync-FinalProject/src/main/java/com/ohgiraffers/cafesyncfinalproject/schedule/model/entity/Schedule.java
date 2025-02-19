@@ -1,5 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.schedule.model.entity;
 
+import com.ohgiraffers.cafesyncfinalproject.employee.model.entity.Employee;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,5 +31,14 @@ public class Schedule {
 
     @Column(name = "fran_code")
     private int franCode;
+
+    // Join
+    @ManyToOne
+    @JoinColumn(
+            name = "emp_code",
+            referencedColumnName = "emp_code",
+            insertable = false,
+            updatable = false)
+    private Employee employee;
 
 }
