@@ -1,26 +1,25 @@
 package com.ohgiraffers.cafesyncfinalproject.note.model.service;
 
+import com.ohgiraffers.cafesyncfinalproject.note.model.dao.NoteInsertRepository;
 import com.ohgiraffers.cafesyncfinalproject.note.model.dao.NoteRepository;
 import com.ohgiraffers.cafesyncfinalproject.note.model.dto.NoteDTO;
 import com.ohgiraffers.cafesyncfinalproject.note.model.entity.Note;
+import com.ohgiraffers.cafesyncfinalproject.note.model.entity.NoteInsert;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class NoteService {
 
     private final NoteRepository noteRepository;
     private final ModelMapper modelMapper;
-
-    @Autowired
-    public NoteService(NoteRepository noteRepository, ModelMapper modelMapper){
-        this.noteRepository = noteRepository;
-        this.modelMapper = modelMapper;
-    }
+    private final NoteInsertRepository noteInsertRepository;
 
     // Note 전체 조회
     public List<NoteDTO> getAllNotes() {
@@ -60,14 +59,20 @@ public class NoteService {
         return noteDTOList;
     }
 
-    public Note insertNote(NoteDTO noteDTO) {
-        // DTO -> Entity 변환
-        Note note = new Note();
-        note.setNoteTitle(noteDTO.getNoteTitle());
-        note.setNoteDate(noteDTO.getNoteDate());
-        note.setNoteDetail(noteDTO.getNoteDetail());
-        note.setAttachment(noteDTO.getAttachment());
+    // 바리스타 노트 등록
+    @Transactional
+    public int insertNote(NoteDTO noteDTO) {
+        if (noteDTO == null || noteDTO.getUserId() == null) {
+            throw new IllegalArgumentException("노트 정보가 올바르지 않습니다.");
+        }
 
-        return noteRepository.save(note);
+        // DTO -> Entity 변환
+        NoteInsert noteEntity = modelMapper.map(noteDTO, NoteInsert.class);
+
+        // 노트 저장
+        NoteInsert savedNote = noteInsertRepository.save(noteEntity);
+
+        // 저장된 엔티티의 noteCode 반환
+        return savedNote.getNoteCode();
     }
 }

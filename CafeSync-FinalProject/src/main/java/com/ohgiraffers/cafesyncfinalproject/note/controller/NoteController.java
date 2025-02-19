@@ -52,7 +52,12 @@ public class NoteController {
     @Tag(name = "노트 등록", description = "새로운 노트 등록")
     @PostMapping("/notes")
     public ResponseEntity<ResponseDTO> insertNote(@RequestBody NoteDTO noteDTO) {
-        return ResponseEntity.ok()
-                .body(new ResponseDTO(HttpStatus.OK, "노트 등록 성공", noteService.insertNote(noteDTO)));
+        try {
+            int noteCode = noteService.insertNote(noteDTO);
+            return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "노트 등록 성공", noteCode));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "노트 등록 실패", e.getMessage()));
+        }
     }
 }
