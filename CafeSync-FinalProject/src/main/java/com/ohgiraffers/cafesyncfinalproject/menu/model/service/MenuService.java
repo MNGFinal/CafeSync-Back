@@ -44,9 +44,6 @@ public class MenuService {
 
         menuRepository.save(menuSoldOut);
 
-        ModelMapper modelMapper = new ModelMapper();
-
-
         MenuDTO menuDTO = modelMapper.map(menuSoldOut, MenuDTO.class);
 
         return menuDTO;  //dto로 변환해서 넘김

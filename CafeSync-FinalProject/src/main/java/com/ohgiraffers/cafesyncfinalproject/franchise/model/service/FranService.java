@@ -1,13 +1,12 @@
-package com.ohgiraffers.cafesyncfinalproject.franchise.model;
+package com.ohgiraffers.cafesyncfinalproject.franchise.model.service;
 
 import com.ohgiraffers.cafesyncfinalproject.franchise.model.dao.FranRepository;
 import com.ohgiraffers.cafesyncfinalproject.franchise.model.entity.Fran;
-import com.ohgiraffers.cafesyncfinalproject.franchise.model.entity.FranDTO;
+import com.ohgiraffers.cafesyncfinalproject.franchise.model.dto.FranDTO;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
