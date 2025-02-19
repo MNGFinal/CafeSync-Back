@@ -51,6 +51,7 @@ public class NoteController {
                 .ok().body(new ResponseDTO(HttpStatus.OK, "노트 검색 성공", noteService.selectNoteBySearch(search)));
     }
 
+    @Tag(name = "바리스타 노트 등록", description = "바리스타 노트 정보를 등록")
     @PostMapping("/notes")
     public ResponseEntity<ResponseDTO> insertNote(@RequestBody NoteInsertDTO noteDTO, Principal principal) {
         System.out.println("✅ Received NoteDTO: " + noteDTO);
