@@ -7,10 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,13 +28,22 @@ public class NoteController {
     public ResponseEntity<ResponseDTO> getAllNotes(){
 
         List<NoteDTO> getAllNotes = noteService.getAllNotes();
-        return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK,"조회성공",getAllNotes));
+        return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK,"노트 전체 조회성공",getAllNotes));
     }
 
     @Tag(name = "노트 상세정보 조회", description = "노트의 상세정보 조회")
     @GetMapping("/getAllNotes/{noteCode}")
     public ResponseEntity<ResponseDTO> selectNoteByNoteCode(@PathVariable int noteCode) {
 
-        return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "상품 상세정보 조회 성공",  noteService.selectNoteByNoteCode(noteCode)));
+        return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "노트 상세정보 조회 성공",  noteService.selectNoteByNoteCode(noteCode)));
+    }
+
+    @Tag(name="노트 검색", description = "검색 조건에 맞는 노트를 조회")
+    @GetMapping("/getAllNotes/search")
+    public ResponseEntity<ResponseDTO> selectSearchProductList(
+            @RequestParam(name = "search", defaultValue = "all") String search){
+
+        return ResponseEntity
+                .ok().body(new ResponseDTO(HttpStatus.OK, "노트 검색 성공", noteService.selectNoteBySearch(search)));
     }
 }
