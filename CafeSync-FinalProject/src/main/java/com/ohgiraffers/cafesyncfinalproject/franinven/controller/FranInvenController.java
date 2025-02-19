@@ -2,6 +2,7 @@ package com.ohgiraffers.cafesyncfinalproject.franinven.controller;
 
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.FranInvenDTO;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.InOutDTO;
+import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.InOutInventoryJoinDTO;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.service.FranInvenService;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.service.InOutService;
 import lombok.Getter;
@@ -9,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/fran")
@@ -50,7 +53,7 @@ public class FranInvenController {
         return ResponseEntity.ok("삭제 성공");
     }
 
-    // ✅ 특정 가맹점의 입출고 내역 조회 (네이티브 쿼리 기반)
+    // 특정 가맹점의 입출고 내역 조회 (네이티브 쿼리 기반)
     @GetMapping("/inout/list/{franCode}")
     public ResponseEntity<List<InOutDTO>> getInOutList(@PathVariable("franCode") int franCode) {
 
@@ -59,6 +62,26 @@ public class FranInvenController {
         List<InOutDTO> inOutList = inOutService.getInOutList(franCode);
 
         return ResponseEntity.ok(inOutList);
+    }
+
+    // 출고 등록
+    @PostMapping("/inout/out-register")
+    public ResponseEntity<Map<String, Object>> insertOutRegister(@RequestBody List<InOutInventoryJoinDTO> request) {
+
+        System.out.println("출고 등록 데이터 = " + request);
+
+        boolean isRegistered = inOutService.registerOut(request);
+
+        // ✅ JSON 응답 객체 생성
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", isRegistered);
+        response.put("message", isRegistered ? "출고 등록 성공" : "출고 등록 실패");
+
+        if (isRegistered) {
+            return ResponseEntity.ok(response); // ✅ 성공 응답 (200 OK)
+        } else {
+            return ResponseEntity.badRequest().body(response); // ❌ 실패 응답 (400 Bad Request)
+        }
     }
 }
 

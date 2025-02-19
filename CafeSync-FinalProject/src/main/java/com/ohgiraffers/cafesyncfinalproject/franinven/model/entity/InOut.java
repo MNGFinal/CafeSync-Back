@@ -33,9 +33,12 @@ public class InOut {
     @Column(name = "franin_code", nullable = false)
     private int franInCode; // 입고 가맹점 코드
 
-    @Column(name = "inven_code", nullable = false, length = 255)
-    private String invenCode; // 재고 코드
-
-    @Column(name = "quantity", nullable = false)
-    private int quantity; // 수량
+    // ✅ 필요한 생성자 추가
+    public InOut(int inoutDivision, LocalDateTime inoutDate, int inoutStatus, int franOutCode, int franInCode) {
+        this.inoutDivision = inoutDivision;
+        this.inoutDate = inoutDate;
+        this.inoutStatus = inoutStatus;
+        this.franOutCode = franOutCode;
+        this.franInCode = franInCode;
+    }
 }
