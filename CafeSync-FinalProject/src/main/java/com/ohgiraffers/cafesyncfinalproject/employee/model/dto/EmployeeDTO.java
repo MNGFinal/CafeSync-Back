@@ -1,4 +1,4 @@
-package com.ohgiraffers.cafesyncfinalproject.account.model.dto;
+package com.ohgiraffers.cafesyncfinalproject.employee.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
