@@ -1,5 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.note.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class Note {
     private String noteTitle;
 
     @Column(name = "note_date")
+    @JsonFormat(pattern = "yyyy-MM-dd a HH:mm:ss")
     private LocalDateTime noteDate;
 
     @Column(name = "note_detail")

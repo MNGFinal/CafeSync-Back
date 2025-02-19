@@ -42,4 +42,8 @@ public class Menu {
 
     @Column(name = "season_menu")
     private int seasonMenu;         // 시즌 메뉴
+
+    public void toggleOrderableStatus() {
+        this.orderableStatus = !this.orderableStatus;
+    }
 }
