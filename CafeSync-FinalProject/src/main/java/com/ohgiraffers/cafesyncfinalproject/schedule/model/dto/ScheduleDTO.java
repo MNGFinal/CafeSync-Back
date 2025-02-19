@@ -1,6 +1,5 @@
 package com.ohgiraffers.cafesyncfinalproject.schedule.model.dto;
 
-import com.ohgiraffers.cafesyncfinalproject.employee.model.dto.EmployeeDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 

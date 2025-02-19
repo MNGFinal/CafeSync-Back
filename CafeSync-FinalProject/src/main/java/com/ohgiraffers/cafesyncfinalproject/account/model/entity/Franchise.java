@@ -1,6 +1,5 @@
 package com.ohgiraffers.cafesyncfinalproject.account.model.entity;
 
-import com.ohgiraffers.cafesyncfinalproject.employee.model.entity.Employee;
 import jakarta.persistence.*;
 import lombok.*;
 

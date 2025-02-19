@@ -1,6 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.schedule.model.entity;
 
-import com.ohgiraffers.cafesyncfinalproject.employee.model.entity.Employee;
+import com.ohgiraffers.cafesyncfinalproject.account.model.entity.Employee;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

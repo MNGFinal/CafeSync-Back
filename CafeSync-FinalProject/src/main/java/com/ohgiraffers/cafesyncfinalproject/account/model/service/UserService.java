@@ -1,7 +1,7 @@
 package com.ohgiraffers.cafesyncfinalproject.account.model.service;
 
 import com.ohgiraffers.cafesyncfinalproject.account.model.dao.UserRepository;
-import com.ohgiraffers.cafesyncfinalproject.employee.model.dto.EmployeeDTO;
+import com.ohgiraffers.cafesyncfinalproject.account.model.dto.EmployeeDTO;
 import com.ohgiraffers.cafesyncfinalproject.account.model.dto.FranchiseDTO;
 import com.ohgiraffers.cafesyncfinalproject.account.model.dto.JobDTO;
 import com.ohgiraffers.cafesyncfinalproject.account.model.dto.UserDTO;
