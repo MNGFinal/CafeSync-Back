@@ -28,7 +28,7 @@ public class NoteController {
         this.noteService = noteService;
     }
 
-    @Operation(name = "노트 전체조회", description = "노트 목록의 전체 조회")
+    @Operation( summary = "노트 전체조회", description = "노트 목록의 전체 조회")
     @GetMapping("/getAllNotes")
     public ResponseEntity<ResponseDTO> getAllNotes(){
 
@@ -36,14 +36,14 @@ public class NoteController {
         return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK,"노트 전체 조회성공",getAllNotes));
     }
 
-    @Operation(name = "노트 상세정보 조회", description = "노트의 상세정보 조회")
+    @Operation(summary  = "노트 상세정보 조회", description = "노트의 상세정보 조회")
     @GetMapping("/getAllNotes/{noteCode}")
     public ResponseEntity<ResponseDTO> selectNoteByNoteCode(@PathVariable int noteCode) {
 
         return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "노트 상세정보 조회 성공",  noteService.selectNoteByNoteCode(noteCode)));
     }
 
-    @Operation(name="노트 검색", description = "검색 조건에 맞는 노트를 조회")
+    @Operation(summary ="노트 검색", description = "검색 조건에 맞는 노트를 조회")
     @GetMapping("/getAllNotes/search")
     public ResponseEntity<ResponseDTO> selectSearchProductList(
             @RequestParam(name = "search", defaultValue = "all") String search){
@@ -52,7 +52,7 @@ public class NoteController {
                 .ok().body(new ResponseDTO(HttpStatus.OK, "노트 검색 성공", noteService.selectNoteBySearch(search)));
     }
 
-    @Operation(name = "바리스타 노트 등록", description = "바리스타 노트 정보를 등록")
+    @Operation(summary  = "바리스타 노트 등록", description = "바리스타 노트 정보를 등록")
     @PostMapping("/notes")
     public ResponseEntity<ResponseDTO> insertNote(@RequestBody NoteInsertDTO noteDTO, Principal principal) {
         System.out.println("✅ Received NoteDTO: " + noteDTO);
