@@ -30,4 +30,5 @@ public class Schedule {
 
     @Column(name = "fran_code")
     private int franCode;
+
 }
