@@ -17,14 +17,31 @@ public class MenuController {
 
     // 카테고리 코드로 메뉴 조회
     @GetMapping("/menus/{categoryCode}")
-    public List<MenuDTO> getMenuList(@PathVariable("categoryCode") int categoryCode){
+    public List<MenuDTO> getMenuList(@PathVariable("categoryCode") int categoryCode, @RequestParam("query") String query){
 
         System.out.println("프론트에서 넘어온 카테고리 = " + categoryCode);
 
-        List<MenuDTO> menuList = menuService.getMenusByCategory(categoryCode);
+        List<MenuDTO> menuList = menuService.getMenusByCategory(categoryCode, query);
 
         System.out.println("제발!!!! = " + menuList);
 
         return menuList;
     }
+
+    // Sold Out 기능
+    @PutMapping("/menus/{menuCode}")
+    public MenuDTO menuSold(@PathVariable("menuCode") int menuCode) {
+
+        System.out.println("프론트에서 넘어온 메뉴코드 = " + menuCode);
+
+        MenuDTO menuSoldOut = menuService.menuSold(menuCode);
+
+        System.out.println("menuSoldOut = " + menuSoldOut);
+
+        return menuSoldOut;
+    }
+
+
+
+
 }

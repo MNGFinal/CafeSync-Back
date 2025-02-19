@@ -53,7 +53,7 @@ public class FranInvenController {
         return ResponseEntity.ok("삭제 성공");
     }
 
-    // 특정 가맹점의 입출고 내역 조회 (네이티브 쿼리 기반)
+    // ✅ 특정 가맹점의 입출고 내역 조회 (네이티브 쿼리 기반)
     @GetMapping("/inout/list/{franCode}")
     public ResponseEntity<List<InOutDTO>> getInOutList(@PathVariable("franCode") int franCode) {
 

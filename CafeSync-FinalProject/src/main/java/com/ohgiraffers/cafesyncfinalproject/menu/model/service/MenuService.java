@@ -7,6 +7,7 @@ import com.ohgiraffers.cafesyncfinalproject.menu.model.entity.Menu;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,8 +20,8 @@ public class MenuService {
     private final ModelMapper modelMapper;
     private final FirebaseStorageService firebaseStorageService;
 
-    public List<MenuDTO> getMenusByCategory(int categoryCode) {
-        List<Menu> menuList = menuRepository.findByCategoryCode(categoryCode);
+    public List<MenuDTO> getMenusByCategory(int categoryCode, String query) {
+        List<Menu> menuList = menuRepository.findByCategoryCodeAndMenuName(categoryCode, query);
 
         return menuList.stream()
                 .map(menu -> {
@@ -30,5 +31,24 @@ public class MenuService {
                     return menuDTO;
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public MenuDTO menuSold(int menuCode) {
+        // 서버에서 엔티티 타입으로 데이터 받고 -> 컨트롤러단에 넘길 때는 DTO 타입으로 변환
+        Menu menuSoldOut = menuRepository.findByMenuCode(menuCode);
+
+        System.out.println("menuSoldOut = " + menuSoldOut);
+
+        menuSoldOut.toggleOrderableStatus();
+
+        menuRepository.save(menuSoldOut);
+
+        ModelMapper modelMapper = new ModelMapper();
+
+
+        MenuDTO menuDTO = modelMapper.map(menuSoldOut, MenuDTO.class);
+
+        return menuDTO;  //dto로 변환해서 넘김
     }
 }

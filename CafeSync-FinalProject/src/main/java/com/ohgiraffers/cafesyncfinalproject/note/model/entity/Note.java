@@ -1,5 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.note.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,9 +29,10 @@ public class Note {
     @Column(name = "note_detail")
     private String noteDetail;
 
-    @Column(name = "attchment")
+    @Column(name = "attachment")
     private String attachment;
 
-    @Column(name = "user_id")
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+    private Account account;
 }

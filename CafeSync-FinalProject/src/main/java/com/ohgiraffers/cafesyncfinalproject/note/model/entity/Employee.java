@@ -1,11 +1,11 @@
-package com.ohgiraffers.cafesyncfinalproject.account.model.entity;
+package com.ohgiraffers.cafesyncfinalproject.note.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
 
-@Entity(name = "AccountEmployee")
+@Entity(name = "NoteEmployee")
 @Table(name = "tbl_employee")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -56,3 +56,4 @@ public class Employee {
     @Column(name = "fran_code")
     private int franCode;
 }
+
