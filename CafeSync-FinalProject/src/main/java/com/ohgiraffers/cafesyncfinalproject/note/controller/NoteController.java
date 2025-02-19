@@ -2,6 +2,7 @@ package com.ohgiraffers.cafesyncfinalproject.note.controller;
 
 import com.ohgiraffers.cafesyncfinalproject.common.ResponseDTO;
 import com.ohgiraffers.cafesyncfinalproject.note.model.dto.NoteDTO;
+import com.ohgiraffers.cafesyncfinalproject.note.model.dto.NoteInsertDTO;
 import com.ohgiraffers.cafesyncfinalproject.note.model.entity.Note;
 import com.ohgiraffers.cafesyncfinalproject.note.model.service.NoteService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.List;
 
 @Tag(name = "바리스타 노트관련 스웨거 연동")
@@ -49,13 +51,14 @@ public class NoteController {
                 .ok().body(new ResponseDTO(HttpStatus.OK, "노트 검색 성공", noteService.selectNoteBySearch(search)));
     }
 
-    @Tag(name = "노트 등록", description = "새로운 노트 등록")
     @PostMapping("/notes")
-    public ResponseEntity<ResponseDTO> insertNote(@RequestBody NoteDTO noteDTO) {
+    public ResponseEntity<ResponseDTO> insertNote(@RequestBody NoteInsertDTO noteDTO, Principal principal) {
+        System.out.println("✅ Received NoteDTO: " + noteDTO);
         try {
-            int noteCode = noteService.insertNote(noteDTO);
+            int noteCode = noteService.insertNote(noteDTO, principal);
             return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "노트 등록 성공", noteCode));
         } catch (Exception e) {
+            e.printStackTrace(); // ✅ 전체 스택 트레이스 출력 (콘솔에서 확인 가능)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "노트 등록 실패", e.getMessage()));
         }

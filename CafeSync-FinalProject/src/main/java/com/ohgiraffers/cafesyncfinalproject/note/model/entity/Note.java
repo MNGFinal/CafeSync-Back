@@ -3,6 +3,7 @@ package com.ohgiraffers.cafesyncfinalproject.note.model.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +25,7 @@ public class Note {
     private String noteTitle;
 
     @Column(name = "note_date")
+    @CreationTimestamp
     private LocalDateTime noteDate;
 
     @Column(name = "note_detail")

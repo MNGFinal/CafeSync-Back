@@ -3,6 +3,7 @@ package com.ohgiraffers.cafesyncfinalproject.note.model.service;
 import com.ohgiraffers.cafesyncfinalproject.note.model.dao.NoteInsertRepository;
 import com.ohgiraffers.cafesyncfinalproject.note.model.dao.NoteRepository;
 import com.ohgiraffers.cafesyncfinalproject.note.model.dto.NoteDTO;
+import com.ohgiraffers.cafesyncfinalproject.note.model.dto.NoteInsertDTO;
 import com.ohgiraffers.cafesyncfinalproject.note.model.entity.Note;
 import com.ohgiraffers.cafesyncfinalproject.note.model.entity.NoteInsert;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,20 +61,52 @@ public class NoteService {
         return noteDTOList;
     }
 
-    // 바리스타 노트 등록
     @Transactional
-    public int insertNote(NoteDTO noteDTO) {
-        if (noteDTO == null || noteDTO.getUserId() == null) {
-            throw new IllegalArgumentException("노트 정보가 올바르지 않습니다.");
+    public int insertNote(NoteInsertDTO noteDTO, Principal principal) {
+        if (noteDTO == null) {
+            throw new IllegalArgumentException("❌ 노트 정보가 없습니다.");
         }
 
+        if (principal == null || principal.getName() == null) {
+            throw new SecurityException("❌ 인증 정보가 없습니다.");
+        }
+
+        String userIdFromPrincipal = principal.getName();
+        String userIdFromDTO = noteDTO.getUserId();
+
+        if (userIdFromDTO == null || !userIdFromDTO.equals(userIdFromPrincipal)) {
+            throw new IllegalArgumentException("❌ 요청한 사용자 정보가 일치하지 않습니다. [" + userIdFromDTO + " != " + userIdFromPrincipal + "]");
+        }
+
+        System.out.println("✅ 노트 저장 시도 - 사용자: " + userIdFromPrincipal);
+        System.out.println("✅ 노트 데이터: " + noteDTO);
+
         // DTO -> Entity 변환
-        NoteInsert noteEntity = modelMapper.map(noteDTO, NoteInsert.class);
+        NoteInsert noteEntity;
+        try {
+            noteEntity = modelMapper.map(noteDTO, NoteInsert.class);
+        } catch (Exception e) {
+            throw new RuntimeException("❌ DTO 변환 오류: " + e.getMessage());
+        }
+
+        // 데이터 검증 (DB 저장 전)
+        if (noteEntity.getNoteTitle() == null || noteEntity.getNoteTitle().trim().isEmpty()) {
+            throw new IllegalArgumentException("❌ 노트 제목이 없습니다.");
+        }
+        if (noteEntity.getNoteDetail() == null || noteEntity.getNoteDetail().trim().isEmpty()) {
+            throw new IllegalArgumentException("❌ 노트 내용이 없습니다.");
+        }
+        if (noteEntity.getUserId() == null || noteEntity.getUserId().trim().isEmpty()) {
+            throw new IllegalArgumentException("❌ 사용자 ID가 없습니다.");
+        }
 
         // 노트 저장
-        NoteInsert savedNote = noteInsertRepository.save(noteEntity);
-
-        // 저장된 엔티티의 noteCode 반환
-        return savedNote.getNoteCode();
+        try {
+            NoteInsert savedNote = noteInsertRepository.saveAndFlush(noteEntity);
+            System.out.println("✅ 노트 저장 완료 - noteCode: " + savedNote.getNoteCode());
+            return savedNote.getNoteCode();
+        } catch (Exception e) {
+            throw new RuntimeException("❌ 노트 저장 중 오류 발생: " + e.getMessage());
+        }
     }
 }
