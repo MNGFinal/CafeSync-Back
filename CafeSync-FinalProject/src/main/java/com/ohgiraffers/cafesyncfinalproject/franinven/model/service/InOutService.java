@@ -1,6 +1,8 @@
 package com.ohgiraffers.cafesyncfinalproject.franinven.model.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ohgiraffers.cafesyncfinalproject.franinven.model.dao.FranInvenRepository;
+import com.ohgiraffers.cafesyncfinalproject.franinven.model.dao.FranInventoryRepository;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dao.InOutInventoryRepository;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dao.InOutRepository;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.*;
@@ -22,6 +24,8 @@ public class InOutService {
     private final InOutRepository inOutRepository;
     private final ObjectMapper objectMapper = new ObjectMapper(); // ✅ JSON 파서 추가
     private final InOutInventoryRepository inOutInventoryRepository;
+    private final FranInventoryRepository franInventoryRepository;
+
 
     // ✅ 입출고 내역 조회 (재고 포함)
     public List<InOutDTO> getInOutList(int franCode) {
@@ -107,6 +111,44 @@ public class InOutService {
         } catch (Exception e) {
             e.printStackTrace();
             return false; // 실패
+        }
+    }
+
+    // 입고 승인
+    @Transactional
+    public void approveInOut(List<InOutDTO> request) {
+        for (InOutDTO item : request) {
+            int inoutId = item.getInoutCode();  // ✅ 입출고 Code 가져오기
+            int franOutCode = item.getFranOutCode().getFranCode(); // ✅ 출고 매장 코드
+            int franInCode = item.getFranInCode().getFranCode();   // ✅ 입고 매장 코드
+
+            // ✅ 입출고 상태 업데이트 (승인 처리)
+            inOutRepository.updateInOutStatus(inoutId, 1); // inoutStatus = 1 (승인)
+
+            // ✅ 출고된 상품 리스트 조회
+            List<InOutInventory> inventoryList = inOutInventoryRepository.findByInoutCode(inoutId);
+
+            for (InOutInventory inventory : inventoryList) {
+                String invenCode = inventory.getInvenCode(); // ✅ 제품 코드
+                int quantity = inventory.getQuantity();      // ✅ 출고/입고 수량
+
+                // ✅ 출고 매장 재고 차감
+                franInventoryRepository.decreaseStock(franOutCode, invenCode, quantity);
+
+                // ✅ 입고 매장 재고 증가
+                franInventoryRepository.increaseStock(franInCode, invenCode, quantity);
+            }
+        }
+    }
+
+    // 입고 취소
+    @Transactional
+    public void cancelInOut(List<InOutDTO> request) {
+        for (InOutDTO item : request) {
+            int inoutId = item.getInoutCode();  // ✅ 입출고 ID 가져오기
+
+            // ✅ 입고 상태를 2(취소)로 변경
+            inOutRepository.updateInOutStatus(inoutId, 2);
         }
     }
 }

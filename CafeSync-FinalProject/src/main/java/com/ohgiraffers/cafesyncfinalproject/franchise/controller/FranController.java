@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import com.ohgiraffers.cafesyncfinalproject.franchise.FranService;
-import com.ohgiraffers.cafesyncfinalproject.franchise.model.entity.FranDTO;
+
+
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -3,6 +3,7 @@ package com.ohgiraffers.cafesyncfinalproject.franinven.model.dao;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.entity.InOut;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -35,4 +36,9 @@ public interface InOutRepository extends JpaRepository<InOut, Integer> {
     """, nativeQuery = true)
     List<Object[]> findInOutWithInventory(@Param("franCode") int franCode);
 
+
+    // 입고 승인 및 취소
+    @Modifying
+    @Query("UPDATE InOut i SET i.inoutStatus = :status WHERE i.inoutCode = :inoutId")
+    void updateInOutStatus(@Param("inoutId") int inoutId, @Param("status") int status);
 }
