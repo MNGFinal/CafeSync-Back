@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +31,7 @@ public class NoteController {
     }
 
     @Operation( summary = "노트 전체조회", description = "노트 목록의 전체 조회")
-    @GetMapping("/getAllNotes")
+    @GetMapping("/notes")
     public ResponseEntity<ResponseDTO> getAllNotes(){
 
         List<NoteDTO> getAllNotes = noteService.getAllNotes();
@@ -37,14 +39,14 @@ public class NoteController {
     }
 
     @Operation(summary  = "노트 상세정보 조회", description = "노트의 상세정보 조회")
-    @GetMapping("/getAllNotes/{noteCode}")
+    @GetMapping("/notes/{noteCode}")
     public ResponseEntity<ResponseDTO> selectNoteByNoteCode(@PathVariable int noteCode) {
 
         return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "노트 상세정보 조회 성공",  noteService.selectNoteByNoteCode(noteCode)));
     }
 
     @Operation(summary ="노트 검색", description = "검색 조건에 맞는 노트를 조회")
-    @GetMapping("/getAllNotes/search")
+    @GetMapping("/notes/search")
     public ResponseEntity<ResponseDTO> selectSearchProductList(
             @RequestParam(name = "search", defaultValue = "all") String search){
 
@@ -55,7 +57,7 @@ public class NoteController {
     @Operation(summary  = "바리스타 노트 등록", description = "바리스타 노트 정보를 등록")
     @PostMapping("/notes")
     public ResponseEntity<ResponseDTO> insertNote(@RequestBody NoteInsertDTO noteDTO, Principal principal) {
-        System.out.println("✅ Received NoteDTO: " + noteDTO);
+
         try {
             int noteCode = noteService.insertNote(noteDTO, principal);
             return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "노트 등록 성공", noteCode));
@@ -64,5 +66,12 @@ public class NoteController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "노트 등록 실패", e.getMessage()));
         }
+    }
+
+    @Operation(summary = "바리스타 노트 수정", description = "바리스타 노트 수정")
+    @PutMapping(value = "/notes")
+    public ResponseEntity<ResponseDTO> updateProduct(@RequestBody NoteInsertDTO noteInsertDTO) {
+
+        return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "바리스타 노트 수정 성공",  noteService.updateNote(noteInsertDTO)));
     }
 }

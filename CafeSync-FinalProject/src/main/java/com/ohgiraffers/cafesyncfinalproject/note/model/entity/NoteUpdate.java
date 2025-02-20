@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class NoteInsert {
+public class NoteUpdate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,40 +30,43 @@ public class NoteInsert {
     @Column(name = "attachment")
     private String attachment;
 
-    @Column(name = "user_id")
-    private String userId;
+    // ✅ userId를 직접 저장하는 대신 Account 엔티티와 관계 설정
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    private Account account;
 
-    public NoteInsert noteCode(int noteCode) {
+    public NoteUpdate noteCode(int noteCode) {
         this.noteCode = noteCode;
         return this;
     }
 
-    public NoteInsert noteTitle(String noteTitle) {
+    public NoteUpdate noteTitle(String noteTitle) {
         this.noteTitle = noteTitle;
         return this;
     }
 
-    public NoteInsert noteDate(LocalDateTime noteDate) {
+    public NoteUpdate noteDate(LocalDateTime noteDate) {
         this.noteDate = noteDate;
         return this;
     }
 
-    public NoteInsert noteDetail(String noteDetail) {
+    public NoteUpdate noteDetail(String noteDetail) {
         this.noteDetail = noteDetail;
         return this;
     }
 
-    public NoteInsert attachment(String attachment) {
+    public NoteUpdate attachment(String attachment) {
         this.attachment = attachment;
         return this;
     }
 
-    public NoteInsert userId(String userId){
-        this.userId = userId;
+    public NoteUpdate account(Account account) {
+        this.account = account;
         return this;
     }
 
-    public NoteInsert build(){
-        return new NoteInsert(noteCode,noteTitle,noteDate,noteDetail,attachment,userId);
+    public NoteUpdate build() {
+        return new NoteUpdate(noteCode, noteTitle, noteDate, noteDetail, attachment, account);
     }
 }
+
