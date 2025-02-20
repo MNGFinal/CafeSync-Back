@@ -1,5 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.franinven.controller;
 
+import com.ohgiraffers.cafesyncfinalproject.common.ResponseDTO;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.FranInvenDTO;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.InOutDTO;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.InOutInventoryJoinDTO;
@@ -7,6 +8,7 @@ import com.ohgiraffers.cafesyncfinalproject.franinven.model.service.FranInvenSer
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.service.InOutService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,16 +74,46 @@ public class FranInvenController {
 
         boolean isRegistered = inOutService.registerOut(request);
 
-        // ✅ JSON 응답 객체 생성
         Map<String, Object> response = new HashMap<>();
         response.put("success", isRegistered);
         response.put("message", isRegistered ? "출고 등록 성공" : "출고 등록 실패");
 
         if (isRegistered) {
-            return ResponseEntity.ok(response); // ✅ 성공 응답 (200 OK)
+            return ResponseEntity.ok(response); // ✅ JSON 형태로 응답
         } else {
-            return ResponseEntity.badRequest().body(response); // ❌ 실패 응답 (400 Bad Request)
+            return ResponseEntity.badRequest().body(response); // ❌ 실패 시 JSON 응답
+        }
+    }
+
+    // 입고 승인
+    @PutMapping("/inout/approve")
+    public ResponseEntity<String> inoutApprove(@RequestBody List<InOutDTO> request) {
+        System.out.println("request = " + request);
+
+        try {
+            inOutService.approveInOut(request);
+            return ResponseEntity.ok("입고 승인 성공!"); // ✅ String 메시지 반환
+        } catch (Exception e) {
+            System.err.println("❌ 입고 승인 중 오류 발생: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("입고 승인 실패");
+        }
+    }
+    @PutMapping("/inout/cancel")
+    public ResponseEntity<String> inoutCancel(@RequestBody List<InOutDTO> request) {
+        System.out.println("request = " + request);
+
+        try {
+            // ✅ 입고 취소 서비스 호출
+            inOutService.cancelInOut(request);
+            return ResponseEntity.ok("입고 취소 성공!"); // ✅ 성공 메시지 반환
+        } catch (Exception e) {
+            System.err.println("❌ 입고 취소 중 오류 발생: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("입고 취소 실패");
         }
     }
 }
+
+
 
