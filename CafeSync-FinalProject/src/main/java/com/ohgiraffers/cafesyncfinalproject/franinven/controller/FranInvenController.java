@@ -4,8 +4,10 @@ import com.ohgiraffers.cafesyncfinalproject.common.ResponseDTO;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.FranInvenDTO;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.InOutDTO;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.InOutInventoryJoinDTO;
+import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.OrderDTO;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.service.FranInvenService;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.service.InOutService;
+import com.ohgiraffers.cafesyncfinalproject.franinven.model.service.OrderService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ public class FranInvenController {
 
     private final FranInvenService franInvenService;
     private final InOutService inOutService;
+    private final OrderService orderService;
 
     // 로그인한 가맹점의 재고 목록 조회
     @GetMapping("/inven/{franCode}")
@@ -88,7 +91,6 @@ public class FranInvenController {
     // 입고 승인
     @PutMapping("/inout/approve")
     public ResponseEntity<String> inoutApprove(@RequestBody List<InOutDTO> request) {
-        System.out.println("request = " + request);
 
         try {
             inOutService.approveInOut(request);
@@ -101,7 +103,6 @@ public class FranInvenController {
     }
     @PutMapping("/inout/cancel")
     public ResponseEntity<String> inoutCancel(@RequestBody List<InOutDTO> request) {
-        System.out.println("request = " + request);
 
         try {
             // ✅ 입고 취소 서비스 호출
@@ -111,6 +112,21 @@ public class FranInvenController {
             System.err.println("❌ 입고 취소 중 오류 발생: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("입고 취소 실패");
+        }
+    }
+
+    // 발주 신청
+    @PostMapping("/order/request")
+    public ResponseEntity<String> insertOrder(@RequestBody List<OrderDTO> orderRequest) {
+
+        System.out.println("orderRequest = " + orderRequest);
+
+        boolean isSuccess = orderService.insertOrder(orderRequest);
+
+        if (isSuccess) {
+            return ResponseEntity.ok("발주 신청이 완료되었습니다.");
+        } else {
+            return ResponseEntity.badRequest().body("발주 신청에 실패했습니다.");
         }
     }
 }
