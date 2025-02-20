@@ -32,6 +32,11 @@ public class FranService {
                 .map(fran -> {
                     FranDTO franDTO = modelMapper.map(fran, FranDTO.class); // ✅ FranDTO 변환
 
+                    // ✅ 점장이름 가져오기
+                    if (fran.getEmployee() != null) {
+                        franDTO.setEmpName(fran.getEmployee().getEmpName());
+                    }
+
                     // ✅ Firebase Storage에서 이미지 URL 변환
                     if (franDTO.getFranImage() != null) {
                         franDTO.setFranImage(
