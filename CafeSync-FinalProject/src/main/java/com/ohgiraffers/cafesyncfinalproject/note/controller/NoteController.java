@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,7 +57,7 @@ public class NoteController {
     @Operation(summary  = "바리스타 노트 등록", description = "바리스타 노트 정보를 등록")
     @PostMapping("/notes")
     public ResponseEntity<ResponseDTO> insertNote(@RequestBody NoteInsertDTO noteDTO, Principal principal) {
-        System.out.println("✅ Received NoteDTO: " + noteDTO);
+
         try {
             int noteCode = noteService.insertNote(noteDTO, principal);
             return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "노트 등록 성공", noteCode));
@@ -66,10 +68,10 @@ public class NoteController {
         }
     }
 
-//    @Operation(summary = "바리스타 노트 수정", description = "바리스타 노트 수정")
-//    @PutMapping(value = "/notes")
-//    public ResponseEntity<ResponseDTO> updateProduct(@ModelAttribute NoteInsertDTO noteInsertDTO) {
-//
-//        return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "바리스타 노트 수정 성공",  noteService.updateNote(noteInsertDTO)));
-//    }
+    @Operation(summary = "바리스타 노트 수정", description = "바리스타 노트 수정")
+    @PutMapping(value = "/notes")
+    public ResponseEntity<ResponseDTO> updateProduct(@RequestBody NoteInsertDTO noteInsertDTO) {
+
+        return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "바리스타 노트 수정 성공",  noteService.updateNote(noteInsertDTO)));
+    }
 }
