@@ -1,5 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.schedule.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -16,6 +17,7 @@ public class ScheduleDTO {
     @Schema(description = "스케줄 코드")
     private int scheduleCode;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Schema(description = "스케줄 날짜")
     private Date scheduleDate;
 
@@ -28,10 +30,7 @@ public class ScheduleDTO {
     @Schema(description = "가맹점 코드")
     private int franCode;
 
-
     // JOIN
-//    @Schema(description = "직원 정보")
-//    private EmployeeDTO employeeDTO;
     @Schema(description = "직원 이름")
     private String empName;
 }

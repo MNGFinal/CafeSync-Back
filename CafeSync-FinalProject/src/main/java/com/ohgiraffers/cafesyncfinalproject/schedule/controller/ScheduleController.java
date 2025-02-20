@@ -4,6 +4,7 @@ import com.ohgiraffers.cafesyncfinalproject.schedule.model.dto.ScheduleDTO;
 import com.ohgiraffers.cafesyncfinalproject.schedule.model.service.ScheduleService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,12 +19,17 @@ public class ScheduleController {
 
     @GetMapping("/schedule/{franCode}")
     public List<ScheduleDTO> findSchedulesByFranCode(@PathVariable int franCode) {
-        System.out.println("schedule franCode = " + franCode);
+//        System.out.println("schedule franCode = " + franCode);
         List<ScheduleDTO> schedules = scheduleService.findByFranCode(franCode);
-        System.out.println("스케줄 컨트롤러 schedules = " + schedules);
+//        System.out.println("스케줄 컨트롤러 schedules = " + schedules);
         return schedules;
     }
 
-
+    @PostMapping("/schedule")
+    public ResponseEntity<String> registSchedule(@RequestBody List<ScheduleDTO> scheduleList) {
+        System.out.println("scheduleList = " + scheduleList);
+        scheduleService.saveSchedule(scheduleList);
+        return ResponseEntity.ok("스케줄 저장 성공!");
+    }
 
 }
