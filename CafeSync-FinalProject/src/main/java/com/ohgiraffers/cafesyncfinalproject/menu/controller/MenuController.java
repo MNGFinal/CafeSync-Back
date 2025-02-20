@@ -61,6 +61,7 @@ public class MenuController {
 
         ResponseDTO response = new ResponseDTO(HttpStatus.OK, "Sold Out 설정 성공", menuSoldOut);
 
+        
         return ResponseEntity.ok(response);
     }
 
