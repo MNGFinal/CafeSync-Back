@@ -1,11 +1,16 @@
 package com.ohgiraffers.cafesyncfinalproject.franchise.controller;
 
+
 import com.ohgiraffers.cafesyncfinalproject.common.ResponseDTO;
 import com.ohgiraffers.cafesyncfinalproject.franchise.model.service.FranService;
 import com.ohgiraffers.cafesyncfinalproject.franchise.model.dto.FranDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import com.ohgiraffers.cafesyncfinalproject.franchise.FranService;
+import com.ohgiraffers.cafesyncfinalproject.franchise.model.entity.FranDTO;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
