@@ -146,7 +146,6 @@ public class InOutService {
     public void cancelInOut(List<InOutDTO> request) {
         for (InOutDTO item : request) {
             int inoutId = item.getInoutCode();  // ✅ 입출고 ID 가져오기
-            System.out.println("🚨 취소 처리할 inoutId: " + inoutId);
 
             // ✅ 입고 상태를 2(취소)로 변경
             inOutRepository.updateInOutStatus(inoutId, 2);
