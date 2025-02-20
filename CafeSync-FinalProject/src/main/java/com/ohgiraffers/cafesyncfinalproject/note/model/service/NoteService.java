@@ -71,4 +71,11 @@ public class NoteService {
         NoteInsert savedNote = noteInsertRepository.saveAndFlush(noteEntity);
         return savedNote.getNoteCode();
     }
+
+//    public Object updateNote(NoteInsertDTO noteInsertDTO) {
+//
+//        NoteInsert noteUpdate = noteInsertRepository.findById(noteInsertDTO.getNoteCode()).get();
+//
+//        noteUpdate = note
+//    }
 }
