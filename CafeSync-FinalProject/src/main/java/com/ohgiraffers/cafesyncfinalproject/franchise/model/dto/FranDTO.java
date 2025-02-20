@@ -1,6 +1,5 @@
-package com.ohgiraffers.cafesyncfinalproject.franchise.model.entity;
+package com.ohgiraffers.cafesyncfinalproject.franchise.model.dto;
 
-import jakarta.persistence.Column;
 import lombok.*;
 
 @AllArgsConstructor

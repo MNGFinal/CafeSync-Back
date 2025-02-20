@@ -17,7 +17,7 @@ public class ScheduleController {
     public final ScheduleService scheduleService;
 
     @GetMapping("/schedule/{franCode}")
-    public List<ScheduleDTO> getSchedulesByFranCode(@PathVariable int franCode) {
+    public List<ScheduleDTO> findSchedulesByFranCode(@PathVariable int franCode) {
         System.out.println("schedule franCode = " + franCode);
         List<ScheduleDTO> schedules = scheduleService.findByFranCode(franCode);
         System.out.println("스케줄 컨트롤러 schedules = " + schedules);
