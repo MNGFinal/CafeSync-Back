@@ -1,5 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.franchise.model.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @AllArgsConstructor
@@ -17,4 +18,8 @@ public class FranDTO {
     private String memo;       // 가맹점 특이사항
     private int empCode;    // 직원 번호 (점장Code)
 
+
+    // 점장이름 조인
+    @Schema(description = "직원 이름")
+    private String empName;
 }

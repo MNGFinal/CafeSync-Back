@@ -1,5 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.franchise.model.entity;
 
+import com.ohgiraffers.cafesyncfinalproject.employee.model.entity.Employee;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +17,6 @@ public class Fran {
 
     @Id
     @Column(name = "fran_code")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int franCode;
 
     @Column(name = "fran_name")
@@ -37,4 +37,7 @@ public class Fran {
     @Column(name = "emp_code")
     private int empCode;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "emp_code", referencedColumnName = "emp_code", insertable = false, updatable = false)
+    private Employee employee;
 }
