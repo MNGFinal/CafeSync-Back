@@ -1,6 +1,8 @@
 package com.ohgiraffers.cafesyncfinalproject.franinven.model.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -9,13 +11,27 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@Schema(description = "입출고 내역 및 재고 상세 DTO") // ✅ DTO 전체 설명
 public class InOutInventoryJoinDTO {
 
-    private int inoutCode;         // 입출고 코드 (PK)
-    private int inoutDivision;     // 입출고 구분 (1: 입고, 2: 출고)
-    private LocalDateTime inoutDate; // 입출고 날짜
-    private int inoutStatus;       // 입출고 상태 (예: 0: 대기, 1: 승인)
-    private FranchiseDTO franOutCode; // 출고 가맹점
-    private FranchiseDTO franInCode;  // 입고 가맹점
+    @Schema(description = "입출고 코드 (PK)", example = "5001")
+    private int inoutCode;
+
+    @Schema(description = "입출고 구분 (1: 입고, 2: 출고)", example = "1")
+    private int inoutDivision;
+
+    @Schema(description = "입출고 날짜", example = "2024-02-21T15:30:00")
+    private LocalDateTime inoutDate;
+
+    @Schema(description = "입출고 상태 (0: 대기, 1: 승인)", example = "1")
+    private int inoutStatus;
+
+    @Schema(description = "출고 가맹점 정보", implementation = FranchiseDTO.class)
+    private FranchiseDTO franOutCode;
+
+    @Schema(description = "입고 가맹점 정보", implementation = FranchiseDTO.class)
+    private FranchiseDTO franInCode;
+
+    @Schema(description = "입출고된 재고 상세 목록", implementation = InOutJoinDTO.class)
     private List<InOutJoinDTO> inventoryList;
 }

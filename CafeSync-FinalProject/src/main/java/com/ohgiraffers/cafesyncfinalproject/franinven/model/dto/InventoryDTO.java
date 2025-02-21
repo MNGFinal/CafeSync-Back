@@ -1,6 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.franinven.model.dto;
 
-import com.ohgiraffers.cafesyncfinalproject.franinven.model.entity.Vendor;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -10,11 +10,22 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
+@Builder
+@Schema(description = "재고(Inventory) DTO") // ✅ DTO 전체 설명
 public class InventoryDTO {
-    
-    private String invenCode; // 거래처별 제품 코드
-    private String invenName; // 거래처별 제품 이름
-    private LocalDateTime expirationDate; // 제품 유통기한
-    private String invenImage; // 제품 이미지
-    private VendorDTO vendor; // 거래처 코드
+
+    @Schema(description = "거래처별 제품 코드", example = "INV-001")
+    private String invenCode;
+
+    @Schema(description = "거래처별 제품 이름", example = "콜롬비아 원두 1kg")
+    private String invenName;
+
+    @Schema(description = "제품 유통기한", example = "2024-12-31T23:59:59")
+    private LocalDateTime expirationDate;
+
+    @Schema(description = "제품 이미지 URL", example = "https://example.com/images/coffee.png")
+    private String invenImage;
+
+    @Schema(description = "거래처 정보", implementation = VendorDTO.class)
+    private VendorDTO vendor;
 }
