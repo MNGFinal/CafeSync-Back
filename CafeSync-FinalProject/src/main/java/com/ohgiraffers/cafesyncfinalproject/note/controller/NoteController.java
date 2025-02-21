@@ -66,7 +66,7 @@ public class NoteController {
 
     @Operation(summary = "바리스타 노트 수정", description = "바리스타 노트 수정")
     @PutMapping(value = "/notes")
-    public ResponseEntity<ResponseDTO> updateProduct(@RequestBody NoteInsertDTO noteInsertDTO) {
+    public ResponseEntity<ResponseDTO> updateNote(@RequestBody NoteInsertDTO noteInsertDTO) {
 
         return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "바리스타 노트 수정 성공",  noteService.updateNote(noteInsertDTO)));
     }
