@@ -23,6 +23,7 @@ public class OrderService {
     private final OrderDetailRepository orderDetailRepository;
     private final FirebaseStorageService firebaseStorageService;
 
+    // 발주 신청
     @Transactional
     public boolean insertOrder(List<OrderDTO> orderDTOList) {
         try {
@@ -57,11 +58,12 @@ public class OrderService {
         }
     }
 
+    // 발주 목록 조회
     public List<OrderDTO> getFranOrderList(int franCode) {
-        // 1️⃣ 가맹점 코드로 주문 목록 조회
+        // 1️⃣ 가맹점 코드로 발주 목록 조회
         List<Order> orders = orderRepository.findByFranCode(franCode);
 
-        // 2️⃣ 주문 코드 목록을 가져옴
+        // 2️⃣ 발주 코드 목록을 가져옴
         List<Integer> orderCodes = orders.stream()
                 .map(Order::getOrderCode)
                 .collect(Collectors.toList());
@@ -105,5 +107,35 @@ public class OrderService {
                                 .collect(Collectors.toList()))
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    // 발주 업데이트
+    @Transactional
+    public void updateFranOrderList(List<OrderDetailDTO> orderDetails) {
+        if (orderDetails == null || orderDetails.isEmpty()) {
+            throw new IllegalArgumentException("업데이트할 주문 목록이 없습니다.");
+        }
+
+        for (OrderDetailDTO dto : orderDetails) {
+            if (dto.getOrderDetailId() == 0) {
+                // ✅ 신규 데이터 → INSERT (orderCode 반드시 포함해야 함)
+                Order order = orderRepository.findById(dto.getOrderCode())
+                        .orElseThrow(() -> new IllegalArgumentException("해당 orderCode가 존재하지 않습니다: " + dto.getOrderCode()));
+
+                OrderDetail newOrderDetail = OrderDetail.builder()
+                        .order(order) // ✅ order 엔티티 매핑
+                        .invenCode(dto.getInvenCode())
+                        .orderQty(dto.getOrderQty())
+                        .build();
+                orderDetailRepository.save(newOrderDetail);
+            } else {
+                // ✅ 기존 데이터 → UPDATE
+                orderDetailRepository.findById(dto.getOrderDetailId())
+                        .ifPresent(existingOrder -> {
+                            OrderDetail updatedOrder = existingOrder.update(dto);
+                            orderDetailRepository.save(updatedOrder);
+                        });
+            }
+        }
     }
 }
