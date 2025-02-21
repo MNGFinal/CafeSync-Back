@@ -138,4 +138,40 @@ public class OrderService {
             }
         }
     }
+
+    // ✅ 발주 상세 삭제 API
+    @Transactional
+    public void deleteOrderDetails(List<OrderDetailDTO> orderDetails) {
+        if (orderDetails == null || orderDetails.isEmpty()) {
+            throw new IllegalArgumentException("삭제할 주문 상세 내역이 없습니다.");
+        }
+
+        // ✅ 삭제할 orderDetailId 목록 추출
+        List<Integer> orderDetailIds = orderDetails.stream()
+                .map(OrderDetailDTO::getOrderDetailId)
+                .collect(Collectors.toList());
+
+        // ✅ 삭제 대상 존재 여부 확인
+        List<OrderDetail> existingDetails = orderDetailRepository.findAllById(orderDetailIds);
+        if (existingDetails.isEmpty()) {
+            throw new IllegalArgumentException("삭제할 주문 상세 내역이 존재하지 않습니다.");
+        }
+
+        // ✅ 삭제 수행
+        orderDetailRepository.deleteAll(existingDetails);
+    }
+
+    // // ✅ 발주 내역 삭제
+    @Transactional
+    public void deleteFranOrderList(List<OrderDTO> request) {
+        for (OrderDTO orderDTO : request) {
+            int orderCode = orderDTO.getOrderCode();
+
+            // ✅ 1. 해당 발주의 상세 항목 먼저 삭제 (tbl_order_detail)
+            orderDetailRepository.deleteByOrderOrderCode(orderCode);
+
+            // ✅ 2. 발주 삭제 (tbl_order)
+            orderRepository.deleteById(orderCode);
+        }
+    }
 }
