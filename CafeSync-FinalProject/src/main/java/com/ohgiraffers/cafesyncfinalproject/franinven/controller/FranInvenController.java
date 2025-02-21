@@ -1,10 +1,7 @@
 package com.ohgiraffers.cafesyncfinalproject.franinven.controller;
 
 import com.ohgiraffers.cafesyncfinalproject.common.ResponseDTO;
-import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.FranInvenDTO;
-import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.InOutDTO;
-import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.InOutInventoryJoinDTO;
-import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.OrderDTO;
+import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.*;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.service.FranInvenService;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.service.InOutService;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.service.OrderService;
@@ -13,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -113,7 +111,7 @@ public class FranInvenController {
             if (franCode <= 0) {
                 return ResponseEntity
                         .badRequest()
-                        .body(new ResponseDTO(HttpStatus.BAD_REQUEST, "Invalid franchise code", null));
+                        .body(new ResponseDTO(HttpStatus.BAD_REQUEST, "가맹점 코드를 확인 할 수 없습니다", null));
             }
 
             List<OrderDTO> orderList = orderService.getFranOrderList(franCode);
@@ -121,15 +119,56 @@ public class FranInvenController {
             if (orderList == null || orderList.isEmpty()) {
                 return ResponseEntity
                         .status(HttpStatus.NO_CONTENT)
-                        .body(new ResponseDTO(HttpStatus.NO_CONTENT, "No orders found", null));
+                        .body(new ResponseDTO(HttpStatus.NO_CONTENT, "발주 내역을 찾을 수 없습니다", null));
             }
 
-            return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "Success", orderList));
+            return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "발주 내역이 성공적으로 조회되었습니다", orderList));
 
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "Server error occurred", null));
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버에 오류가 발생하였습니다", null));
+        }
+    }
+
+    @Operation(summary = "발주 신청 내역 업데이트", description = "가맹점의 발주 신청 내역을 업데이트합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "발주 내역 업데이트 성공",
+                    content = @Content(schema = @Schema(implementation = ResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터",
+                    content = @Content(schema = @Schema(implementation = ResponseDTO.class))),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류 발생",
+                    content = @Content(schema = @Schema(implementation = ResponseDTO.class)))
+    })
+    @PutMapping("/order/update")
+    public ResponseEntity<ResponseDTO> updateFranOrderList(
+            @Parameter(description = "업데이트할 발주 내역 목록", required = true)
+            @RequestBody List<OrderDetailDTO> request) {
+
+        try {
+            // ✅ 요청 데이터 검증
+            if (request == null || request.isEmpty()) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(new ResponseDTO(HttpStatus.BAD_REQUEST, "업데이트할 주문 목록이 없습니다.", null));
+            }
+
+            // ✅ 서비스 로직 실행
+            orderService.updateFranOrderList(request);
+
+            return ResponseEntity
+                    .ok(new ResponseDTO(HttpStatus.OK, "발주 내역이 성공적으로 업데이트되었습니다.", null));
+
+        } catch (IllegalArgumentException e) {
+            // ✅ 유효하지 않은 데이터가 들어왔을 경우
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ResponseDTO(HttpStatus.BAD_REQUEST, e.getMessage(), null));
+        } catch (Exception e) {
+            // ✅ 서버 오류 발생
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버에 오류가 발생했습니다.", null));
         }
     }
 }
