@@ -99,4 +99,8 @@ public class NoteService {
         // 성공 또는 실패 메시지 반환
         return (updatedNote != null) ? "바리스타 노트 업데이트 성공" : "바리스타 노트 업데이트 실패";
     }
+
+    public void deleteNote(int noteCode) {
+        noteInsertRepository.deleteById(noteCode);
+    }
 }
