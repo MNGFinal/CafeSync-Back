@@ -2,10 +2,12 @@ package com.ohgiraffers.cafesyncfinalproject.note.model.service;
 
 import com.ohgiraffers.cafesyncfinalproject.note.model.dao.NoteInsertRepository;
 import com.ohgiraffers.cafesyncfinalproject.note.model.dao.NoteRepository;
+import com.ohgiraffers.cafesyncfinalproject.note.model.dao.NoteUpdateRepository;
 import com.ohgiraffers.cafesyncfinalproject.note.model.dto.NoteDTO;
 import com.ohgiraffers.cafesyncfinalproject.note.model.dto.NoteInsertDTO;
 import com.ohgiraffers.cafesyncfinalproject.note.model.entity.Note;
 import com.ohgiraffers.cafesyncfinalproject.note.model.entity.NoteInsert;
+import com.ohgiraffers.cafesyncfinalproject.note.model.entity.NoteUpdate;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class NoteService {
     private final NoteRepository noteRepository;
     private final ModelMapper modelMapper;
     private final NoteInsertRepository noteInsertRepository;
+    private final NoteUpdateRepository noteUpdateRepository;
 
     // Note 전체 조회
     public List<NoteDTO> getAllNotes() {
@@ -64,11 +67,36 @@ public class NoteService {
     @Transactional
     public int insertNote(NoteInsertDTO noteDTO, Principal principal) {
 
+        // ✅ 현재 시간을 한국 시간(KST)으로 변환하여 저장
+        noteDTO.setNoteDateToKST();
+
         // DTO -> Entity 변환
         NoteInsert noteEntity;
         noteEntity = modelMapper.map(noteDTO, NoteInsert.class);
 
         NoteInsert savedNote = noteInsertRepository.saveAndFlush(noteEntity);
         return savedNote.getNoteCode();
+    }
+
+    @Transactional
+    public Object updateNote(NoteInsertDTO noteInsertDTO) {
+        // 기존의 noteCode 로 NoteUpdate 엔티티를 가져오기
+        NoteUpdate noteUpdate = noteUpdateRepository.getReferenceById(noteInsertDTO.getNoteCode());
+
+        // ✅ 수정 시간을 현재 한국 시간(KST)으로 변경
+        noteInsertDTO.setNoteDateToKST();
+
+        // NoteUpdate 객체의 각 필드 갱신
+        noteUpdate = noteUpdate
+                .noteTitle(noteInsertDTO.getNoteTitle())
+                .noteDate(noteInsertDTO.getNoteDate())
+                .noteDetail(noteInsertDTO.getNoteDetail())
+                .attachment(noteInsertDTO.getAttachment());
+
+        // 수정된 NoteUpdate 엔티티 저장
+        NoteUpdate updatedNote = noteUpdateRepository.save(noteUpdate);
+
+        // 성공 또는 실패 메시지 반환
+        return (updatedNote != null) ? "바리스타 노트 업데이트 성공" : "바리스타 노트 업데이트 실패";
     }
 }
