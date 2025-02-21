@@ -1,5 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.franchise.model.entity;
 
+import com.ohgiraffers.cafesyncfinalproject.employee.model.entity.Employee;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,5 +37,10 @@ public class Fran {
 
     @Column(name = "emp_code")
     private int empCode;
+
+    @ManyToOne
+    @JoinColumn(name = "emp_code", referencedColumnName = "emp_code", insertable = false, updatable = false)
+    private Employee employee;
+
 
 }
