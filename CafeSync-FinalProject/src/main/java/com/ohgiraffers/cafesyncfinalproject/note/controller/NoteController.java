@@ -5,6 +5,7 @@ import com.ohgiraffers.cafesyncfinalproject.note.model.dto.NoteDTO;
 import com.ohgiraffers.cafesyncfinalproject.note.model.dto.NoteInsertDTO;
 import com.ohgiraffers.cafesyncfinalproject.note.model.service.NoteService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,7 @@ public class NoteController {
 
     @Operation(summary  = "노트 상세정보 조회", description = "노트의 상세정보 조회")
     @GetMapping("/notes/{noteCode}")
-    public ResponseEntity<ResponseDTO> selectNoteByNoteCode(@PathVariable int noteCode) {
+    public ResponseEntity<ResponseDTO> selectNoteByNoteCode(@Parameter(description = "노트 코드", example = "1") @PathVariable int noteCode) {
 
         return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "노트 상세정보 조회 성공",  noteService.selectNoteByNoteCode(noteCode)));
     }
@@ -73,7 +74,7 @@ public class NoteController {
 
     @Operation(summary = "바리스타 노트 삭제", description = "바리스타 노트 삭제")
     @DeleteMapping("/notes/{noteCode}")
-    public ResponseEntity<ResponseDTO> deleteNote(@PathVariable int noteCode) {
+    public ResponseEntity<ResponseDTO> deleteNote(@Parameter(description = "노트 코드", example = "1") @PathVariable int noteCode) {
 
         try {
             noteService.deleteNote(noteCode);
