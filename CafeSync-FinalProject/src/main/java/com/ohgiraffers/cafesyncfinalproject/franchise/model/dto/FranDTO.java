@@ -19,7 +19,7 @@ public class FranDTO {
     private int empCode;    // 직원 번호 (점장Code)
 
 
-    // JOIN
+    // 점장이름 조인
     @Schema(description = "직원 이름")
     private String empName;
 }
