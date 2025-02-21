@@ -14,9 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,6 +26,7 @@ public class FranController {
 
     public final FranService franService;
 
+    // 가맹점 전체조회
     @Operation(summary = "가맹점 목록 조회",
                description = "가맹점 목록의 전체 조회", responses = {
                @ApiResponse(responseCode = "200", description = "가맹점 목록 조회 성공"),
@@ -45,4 +44,22 @@ public class FranController {
         return ResponseEntity.ok(response);
     }
 
+    // 가맹점 등록
+    @Operation(summary = "가맹점 등록",
+               description = "가맹점 등록 기능", responses ={
+               @ApiResponse(responseCode = "201", description = "가맹점 등록 성공"),
+               @ApiResponse(responseCode = "400", description = "가맹점 등록 실패")
+
+    })
+    @PostMapping("mgment/regist")
+    public ResponseEntity<ResponseDTO> registFran(@RequestBody FranDTO franDTO) {
+
+        FranDTO franData = franService.registFran(franDTO);
+
+        System.out.println("franList = " + franData);
+
+        ResponseDTO response = new ResponseDTO(HttpStatus.CREATED, "가맹점 등록 성공", franData);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 }
