@@ -31,4 +31,10 @@ public class VendorDTO {
 
     @Schema(description = "거래처 구분 (예: 원두 공급, 베이커리 공급 등)", example = "원두 공급")
     private String venDivision;
+
+    // ✅ 일부 필드만 받는 생성자 추가
+    public VendorDTO(int venCode, String venName) {
+        this.venCode = venCode;
+        this.venName = venName;
+    }
 }
