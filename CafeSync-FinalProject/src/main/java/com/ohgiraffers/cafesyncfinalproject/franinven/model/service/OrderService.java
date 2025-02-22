@@ -164,6 +164,7 @@ public class OrderService {
     // // ✅ 발주 내역 삭제
     @Transactional
     public void deleteFranOrderList(List<OrderDTO> request) {
+
         for (OrderDTO orderDTO : request) {
             int orderCode = orderDTO.getOrderCode();
 

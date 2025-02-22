@@ -233,7 +233,6 @@ public class FranInvenController {
     )
     @DeleteMapping("/order/fran-order")
     public ResponseEntity<ResponseDTO> deleteFranOrderList(@RequestBody List<OrderDTO> request) {
-        System.out.println("발주 삭제 데이터 확인 = " + request);
         try {
             orderService.deleteFranOrderList(request);
             return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "발주 삭제 성공!", null));
