@@ -31,7 +31,9 @@ public class SlipService {
 
         return resultList.stream().map(obj -> new SlipDTO(
                 (int) obj[0],                                    // slipCode
-                ((Timestamp) obj[1]).toLocalDateTime(),          // ✅ Timestamp → LocalDateTime 변환
+                obj[1] instanceof Timestamp ?
+                        ((Timestamp) obj[1]).toLocalDateTime() :  // ✅ Timestamp → LocalDateTime 변환
+                        ((java.sql.Date) obj[1]).toLocalDate().atStartOfDay(), // ✅ Date → LocalDateTime 변환
                 new VendorDTO((int) obj[2], (String) obj[3]),    // venCode
                 (String) obj[4],                                 // slipDivision
                 new ActDTO((int) obj[5], (String) obj[6], (String) obj[7]), // actCode

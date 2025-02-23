@@ -1,9 +1,13 @@
 package com.ohgiraffers.cafesyncfinalproject.slip.controller;
 
 import com.ohgiraffers.cafesyncfinalproject.common.ResponseDTO;
+import com.ohgiraffers.cafesyncfinalproject.slip.model.dto.PnlDTO;
 import com.ohgiraffers.cafesyncfinalproject.slip.model.dto.SlipDTO;
 import com.ohgiraffers.cafesyncfinalproject.slip.model.dto.SlipInsertDTO;
+import com.ohgiraffers.cafesyncfinalproject.slip.model.dto.TaxDTO;
+import com.ohgiraffers.cafesyncfinalproject.slip.model.service.PnlService;
 import com.ohgiraffers.cafesyncfinalproject.slip.model.service.SlipService;
+import com.ohgiraffers.cafesyncfinalproject.slip.model.service.TaxService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,6 +28,8 @@ import java.util.List;
 public class SlipController {
 
     private final SlipService slipService;
+    private final TaxService taxService;
+    private final PnlService pnlService;
 
     @Operation(
             summary = "특정 가맹점의 전표 목록 조회",
@@ -118,4 +124,58 @@ public class SlipController {
         }
     }
 
+    @PostMapping("/tax")
+    @Operation(
+            summary = "세금 계산서 생성",
+            description = "체크된 전표(차변, 대변) 정보를 바탕으로 세금 계산서를 생성합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "생성 성공"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+            }
+    )
+    public ResponseEntity<ResponseDTO> createTax(
+            @RequestBody List<TaxDTO> taxList
+    ) {
+        try {
+            // 세금 계산서 생성 로직 (예: taxService.createTax(taxList))
+            taxService.createTax(taxList);
+
+            return ResponseEntity
+                    .ok(new ResponseDTO(HttpStatus.OK, "세금 계산서 생성 성공", null));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+        }
+    }
+
+    @PostMapping("/pnl")
+    @Operation(
+            summary = "손익 계산서 생성",
+            description = "체크된 전표 리스트를 바탕으로 손익 계산서를 생성합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "손익 계산서 생성 성공"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+            }
+    )
+    public ResponseEntity<ResponseDTO> createPnl(@RequestBody PnlDTO pnlDTO) {
+
+        System.out.println("✅ pnlDTO 데이터: " + pnlDTO);
+
+        try {
+            // ✅ 서비스 호출 → 손익 계산서 저장
+            pnlService.createPnl(pnlDTO);
+
+            return ResponseEntity
+                    .ok(new ResponseDTO(HttpStatus.OK, "손익 계산서 생성 성공", null));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+        }
+    }
 }
