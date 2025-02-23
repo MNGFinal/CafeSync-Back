@@ -92,4 +92,15 @@ public class SlipService {
 
         slipRepository.save(existing);
     }
+
+    // 전표 삭제
+    @Transactional
+    public void deleteSlipList(List<Integer> slipCodes) {
+        for (Integer slipCode : slipCodes) {
+            // 해당 slipCode가 존재하는 경우에만 삭제합니다.
+            if (slipRepository.existsById(slipCode)) {
+                slipRepository.deleteById(slipCode);
+            }
+        }
+    }
 }

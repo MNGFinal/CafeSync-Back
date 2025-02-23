@@ -95,4 +95,27 @@ public class SlipController {
                     .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
         }
     }
+
+    @DeleteMapping("/slip")
+    @Operation(
+            summary = "전표 삭제",
+            description = "전달받은 slipCode 리스트에 해당하는 전표들을 삭제합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "삭제 성공"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+            }
+    )
+    public ResponseEntity<ResponseDTO> deleteSlipList(
+            @RequestBody List<Integer> slipCodes) {
+        try {
+            slipService.deleteSlipList(slipCodes);
+            return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "삭제 성공", null));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+        }
+    }
+
 }
