@@ -2,6 +2,7 @@ package com.ohgiraffers.cafesyncfinalproject.slip.controller;
 
 import com.ohgiraffers.cafesyncfinalproject.common.ResponseDTO;
 import com.ohgiraffers.cafesyncfinalproject.slip.model.dto.SlipDTO;
+import com.ohgiraffers.cafesyncfinalproject.slip.model.dto.SlipInsertDTO;
 import com.ohgiraffers.cafesyncfinalproject.slip.model.service.SlipService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -45,13 +46,8 @@ public class SlipController {
             @Parameter(description = "조회 종료 날짜 (YYYY-MM-DD)", example = "2024-02-28", required = true)
             @RequestParam("endDate") String endDate) {
 
-        // 🔥 요청된 값 확인 (디버깅용)
-        System.out.println("📥 프론트에서 받은 값: franCode = " + franCode + ", startDate = " + startDate + ", endDate = " + endDate);
-
         try {
             List<SlipDTO> slipList = slipService.findFranSlips(franCode, startDate, endDate);
-
-            System.out.println("🔍 조회된 slipList: " + slipList);
 
             if (slipList.isEmpty()) {
                 return ResponseEntity
@@ -70,4 +66,33 @@ public class SlipController {
         }
     }
 
+    @Operation(
+            summary = "가맹점 전표 저장(Insert/Update)",
+            description = "프론트에서 넘어온 전표 목록(SlipInsertDTO)을 받아 DB에 Insert 또는 Update합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "저장 성공"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+            }
+    )
+    @PostMapping("/slip")
+    public ResponseEntity<ResponseDTO> saveSlipList(
+            @RequestBody List<SlipInsertDTO> slipInsertList
+    ) {
+
+        try {
+            // Service를 호출해 Insert/Update 수행
+            slipService.saveSlipList(slipInsertList);
+
+            // 성공 시
+            return ResponseEntity
+                    .ok(new ResponseDTO(HttpStatus.OK, "저장 성공", null));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 실패 시
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+        }
+    }
 }

@@ -1,13 +1,10 @@
 package com.ohgiraffers.cafesyncfinalproject.slip.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "tbl_slip")
@@ -15,6 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 public class Slip {
 
     @Id
@@ -45,4 +43,24 @@ public class Slip {
 
     @Column(name = "fran_code", nullable = false)
     private int franCode;  // 가맹점 코드
+
+
+    // 엔티티 업데이트 메서드(예시)
+    public void updateFromDTO(LocalDateTime slipDate,
+                              int venCode,
+                              String slipDivision,
+                              int actCode,
+                              String summaryCode,
+                              int debit,
+                              int credit,
+                              int franCode) {
+        this.slipDate = slipDate;
+        this.venCode = venCode;
+        this.slipDivision = slipDivision;
+        this.actCode = actCode;
+        this.summaryCode = summaryCode;
+        this.debit = debit;
+        this.credit = credit;
+        this.franCode = franCode;
+    }
 }
