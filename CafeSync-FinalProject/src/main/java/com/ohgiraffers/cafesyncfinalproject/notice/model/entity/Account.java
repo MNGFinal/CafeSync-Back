@@ -1,4 +1,4 @@
-package com.ohgiraffers.cafesyncfinalproject.note.model.entity;
+package com.ohgiraffers.cafesyncfinalproject.notice.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "NoteAccount")
+@Entity(name = "NoticeAccount")
 @Table(name = "tbl_account")
 @Data
 @Builder
