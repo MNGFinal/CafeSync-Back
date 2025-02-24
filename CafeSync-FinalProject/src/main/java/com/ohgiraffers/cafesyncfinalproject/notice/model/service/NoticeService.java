@@ -1,5 +1,7 @@
 package com.ohgiraffers.cafesyncfinalproject.notice.model.service;
 
+import com.ohgiraffers.cafesyncfinalproject.note.model.dto.NoteDTO;
+import com.ohgiraffers.cafesyncfinalproject.note.model.entity.Note;
 import com.ohgiraffers.cafesyncfinalproject.notice.model.dao.NoticeRepository;
 import com.ohgiraffers.cafesyncfinalproject.notice.model.dto.NoticeDTO;
 import com.ohgiraffers.cafesyncfinalproject.notice.model.entity.Notice;
@@ -53,5 +55,20 @@ public class NoticeService {
         }
 
         return noticeDTO;
+    }
+
+    public List<NoticeDTO> selectNoticeBySearch(String search) {
+        List<Notice> noticeListWithSearchValue = noticeRepository.findByNoticeTitleContaining(search);
+
+        List<NoticeDTO> noticeDTOList = noticeListWithSearchValue.stream()
+                .map(notice -> {
+                    NoticeDTO noticeDTO = modelMapper.map(notice, NoticeDTO.class);
+                    noticeDTO.setUserId(notice.getAccount().getUserId());  // Account의 userId 설정
+                    noticeDTO.setEmpName(notice.getAccount().getEmployee().getEmpName());  // Account의 empName 설정
+                    return noticeDTO;
+                })
+                .collect(Collectors.toList());
+
+        return noticeDTOList;
     }
 }
