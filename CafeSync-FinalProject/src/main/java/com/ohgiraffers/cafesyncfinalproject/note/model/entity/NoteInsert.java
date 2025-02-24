@@ -33,6 +33,9 @@ public class NoteInsert {
     @Column(name = "user_id")
     private String userId;
 
+    @Column(name = "view_count")
+    private int viewCount;
+
     public NoteInsert noteCode(int noteCode) {
         this.noteCode = noteCode;
         return this;
@@ -61,9 +64,5 @@ public class NoteInsert {
     public NoteInsert userId(String userId){
         this.userId = userId;
         return this;
-    }
-
-    public NoteInsert build(){
-        return new NoteInsert(noteCode,noteTitle,noteDate,noteDetail,attachment,userId);
     }
 }

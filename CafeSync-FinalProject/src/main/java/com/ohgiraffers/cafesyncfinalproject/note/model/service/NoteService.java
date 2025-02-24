@@ -26,7 +26,6 @@ public class NoteService {
     private final NoteInsertRepository noteInsertRepository;
     private final NoteUpdateRepository noteUpdateRepository;
 
-    // Note 전체 조회
     public List<NoteDTO> getAllNotes() {
         List<Note> notes = noteRepository.findAll();
         return notes.stream()
@@ -38,15 +37,21 @@ public class NoteService {
                         note.getAttachment(),
                         (note.getAccount() != null) ? note.getAccount().getUserId() : null, // account에서 userId 가져오기
                         (note.getAccount() != null && note.getAccount().getEmployee() != null) ?
-                                note.getAccount().getEmployee().getEmpName() : null))  // empName 가져오기
+                                note.getAccount().getEmployee().getEmpName() : null, // empName 가져오기
+                        note.getViewCount() // 조회수 추가
+                ))
                 .collect(Collectors.toList());
     }
 
 
+    @Transactional
     public NoteDTO selectNoteByNoteCode(int noteCode) {
-        Note note = noteRepository.findById(noteCode).get();
-        NoteDTO noteDTO = modelMapper.map(note, NoteDTO.class);
-        return noteDTO;
+        Note note = noteRepository.findById(noteCode)
+                .orElseThrow(() -> new RuntimeException("노트가 존재하지 않습니다."));
+
+        note.increaseViewCount();
+
+        return modelMapper.map(note, NoteDTO.class);
     }
 
     public List<NoteDTO> selectNoteBySearch(String search) {

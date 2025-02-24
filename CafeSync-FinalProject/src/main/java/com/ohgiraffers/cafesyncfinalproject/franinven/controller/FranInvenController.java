@@ -92,6 +92,29 @@ public class FranInvenController {
         return ResponseEntity.ok("입고 승인 성공!");
     }
 
+    @Operation(
+            summary = "입고 취소",
+            description = "입고된 항목을 취소 처리합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "입고 취소 성공!",
+                            content = @Content(mediaType = "application/json")),
+                    @ApiResponse(responseCode = "500", description = "입고 취소 실패",
+                            content = @Content(mediaType = "application/json"))
+            }
+    )
+    @PutMapping("/inout/cancel")
+    public ResponseEntity<String> inoutCancel(@RequestBody List<InOutDTO> request) {
+        try {
+            // ✅ 입고 취소 서비스 호출
+            inOutService.cancelInOut(request);
+            return ResponseEntity.ok("입고 취소 성공!"); // ✅ 성공 메시지 반환
+        } catch (Exception e) {
+            System.err.println("❌ 입고 취소 중 오류 발생: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("입고 취소 실패");
+        }
+    }
+
     @Operation(summary = "발주 신청", description = "가맹점이 발주를 신청합니다.")
     @PostMapping("/order/request")
     public ResponseEntity<String> insertOrder(
@@ -169,6 +192,53 @@ public class FranInvenController {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버에 오류가 발생했습니다.", null));
+        }
+    }
+
+    // ✅ 발주 상세 삭제 API
+    @Operation(
+            summary = "발주 상세 내역 삭제",
+            description = "선택된 발주 상세 내역을 삭제합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "✅ 선택한 발주 상세 내역이 삭제되었습니다.",
+                            content = @Content(mediaType = "application/json")),
+                    @ApiResponse(responseCode = "400", description = "🚨 삭제 실패: 요청 오류",
+                            content = @Content(mediaType = "application/json")),
+                    @ApiResponse(responseCode = "500", description = "❌ 서버 오류 발생!",
+                            content = @Content(mediaType = "application/json"))
+            }
+    )
+    @DeleteMapping("/order/delete")
+    public ResponseEntity<String> deleteOrderDetails(@RequestBody List<OrderDetailDTO> orderDetails) {
+        try {
+            orderService.deleteOrderDetails(orderDetails);
+            return ResponseEntity.ok("✅ 선택한 발주 상세 내역이 삭제되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("🚨 삭제 실패: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("❌ 서버 오류 발생!");
+        }
+    }
+
+    // ✅ 발주 내역 삭제 API
+    @Operation(
+            summary = "발주 내역 삭제",
+            description = "선택된 발주 내역을 삭제합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "발주 삭제 성공!",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDTO.class))),
+                    @ApiResponse(responseCode = "500", description = "발주 삭제 중 오류 발생!",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDTO.class)))
+            }
+    )
+    @DeleteMapping("/order/fran-order")
+    public ResponseEntity<ResponseDTO> deleteFranOrderList(@RequestBody List<OrderDTO> request) {
+        try {
+            orderService.deleteFranOrderList(request);
+            return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "발주 삭제 성공!", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "발주 삭제 중 오류 발생!", null));
         }
     }
 }
