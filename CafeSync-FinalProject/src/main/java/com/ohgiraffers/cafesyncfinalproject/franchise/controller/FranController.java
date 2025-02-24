@@ -58,6 +58,13 @@ public class FranController {
     }
 
     // ✅ 가맹점 삭제 (폐점)
+    @Operation(summary = "가맹점 삭제",
+            description = "가맹점 삭제 기능", responses ={
+            @ApiResponse(responseCode = "204", description = "가맹점 삭제 성공"),
+            @ApiResponse(responseCode = "404", description = "삭제할 가맹점이 존재하지 않음"),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+
+    })
     @DeleteMapping("/mgment/{franCode}")
     public ResponseEntity<ResponseDTO> deleteFran(@PathVariable int franCode) {
         franService.deleteFran(franCode);
