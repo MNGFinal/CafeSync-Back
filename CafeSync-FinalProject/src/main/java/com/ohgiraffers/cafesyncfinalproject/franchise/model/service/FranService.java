@@ -5,6 +5,7 @@ import com.ohgiraffers.cafesyncfinalproject.franchise.model.dao.FranRepository;
 import com.ohgiraffers.cafesyncfinalproject.franchise.model.entity.Fran;
 import com.ohgiraffers.cafesyncfinalproject.franchise.model.dto.FranDTO;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.FranInvenDTO;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,17 @@ public class FranService {
 
         // 저장된 Entity를 DTO로 변환 후 반환
         return modelMapper.map(savedFran, FranDTO.class);
+    }
+
+
+    @Transactional
+    public void deleteFran(int franCode) {
+        try {
+            Fran fran = franRepository.getReferenceById(franCode);
+            franRepository.delete(fran);
+        } catch (EntityNotFoundException e) {
+            throw new RuntimeException("이미 삭제되었거나 존재하지 않는 가맹점입니다.");
+        }
     }
 }
 

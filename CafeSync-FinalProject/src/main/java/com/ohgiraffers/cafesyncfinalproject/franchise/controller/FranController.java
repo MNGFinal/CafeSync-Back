@@ -57,6 +57,11 @@ public class FranController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-//    @PutMapping("/mgment")
-//    public
+    // ✅ 가맹점 삭제 (폐점)
+    @DeleteMapping("/mgment/{franCode}")
+    public ResponseEntity<ResponseDTO> deleteFran(@PathVariable int franCode) {
+        franService.deleteFran(franCode);
+
+        return ResponseEntity.noContent().build();
+    }
 }
