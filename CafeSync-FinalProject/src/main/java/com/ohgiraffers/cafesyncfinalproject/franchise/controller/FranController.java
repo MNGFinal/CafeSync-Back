@@ -1,21 +1,15 @@
 package com.ohgiraffers.cafesyncfinalproject.franchise.controller;
 
-
 import com.ohgiraffers.cafesyncfinalproject.common.ResponseDTO;
 import com.ohgiraffers.cafesyncfinalproject.franchise.model.service.FranService;
 import com.ohgiraffers.cafesyncfinalproject.franchise.model.dto.FranDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-
-
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -51,7 +45,7 @@ public class FranController {
                @ApiResponse(responseCode = "400", description = "가맹점 등록 실패")
 
     })
-    @PostMapping("mgment/regist")
+    @PostMapping("/mgment")
     public ResponseEntity<ResponseDTO> registFran(@RequestBody FranDTO franDTO) {
 
         FranDTO franData = franService.registFran(franDTO);
@@ -62,4 +56,7 @@ public class FranController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+//    @PutMapping("/mgment")
+//    public
 }
