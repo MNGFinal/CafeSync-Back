@@ -136,6 +136,7 @@ public class SlipController {
     public ResponseEntity<ResponseDTO> createTax(
             @RequestBody List<TaxDTO> taxList
     ) {
+
         try {
             // 세금 계산서 생성 로직 (예: taxService.createTax(taxList))
             taxService.createTax(taxList);

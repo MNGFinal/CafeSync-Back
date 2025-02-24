@@ -139,6 +139,7 @@ public class FranInvenController {
 
             List<OrderDTO> orderList = orderService.getFranOrderList(franCode);
 
+
             if (orderList == null || orderList.isEmpty()) {
                 return ResponseEntity
                         .status(HttpStatus.NO_CONTENT)
