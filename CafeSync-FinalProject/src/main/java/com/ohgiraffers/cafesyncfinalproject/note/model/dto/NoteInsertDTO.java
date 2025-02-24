@@ -32,6 +32,9 @@ public class NoteInsertDTO {
     @Schema(description = "노트 생성자 ID", example = "user001")
     private String userId;
 
+    @Schema(description = "조회수" , example = "0")
+    private int viewCount;
+
     public void setNoteDateToKST() {
         this.noteDate = LocalDateTime.now(ZoneId.of("Asia/Seoul")); // ✅ 한국 시간 적용
     }

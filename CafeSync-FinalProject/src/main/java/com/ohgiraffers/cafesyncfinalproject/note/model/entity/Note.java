@@ -1,6 +1,5 @@
 package com.ohgiraffers.cafesyncfinalproject.note.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -37,5 +36,13 @@ public class Note {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
     private Account account;
+
+    @Column(name = "view_count")
+    private int viewCount;
+
+    // ✅ 조회수 증가 메서드 추가
+    public void increaseViewCount() {
+        this.viewCount += 1;
+    }
 
 }

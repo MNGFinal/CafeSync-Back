@@ -33,4 +33,7 @@ public class NoteDTO {
 
     @Schema(description = "노트 생성자 이름", example = "김민재")
     private String empName;
+
+    @Schema(description = "조회수" , example = "5")
+    private int viewCount;
 }
