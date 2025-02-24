@@ -5,7 +5,7 @@ import lombok.*;
 
 import java.util.Date;
 
-@Entity(name = "AccountEmployee")
+@Entity(name = "Employee")
 @Table(name = "tbl_employee")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -54,5 +54,5 @@ public class Employee {
     private int salary;
 
     @Column(name = "fran_code")
-    private int franCode;
+    private Integer franCode;
 }

@@ -16,6 +16,7 @@ public class EmpController {
 
     private final EmployeeService employeeService;
 
+    // 아직 진행 안하는 중
     @GetMapping("/employee/workers/{franCode}")
     public List<EmployeeDTO> findWorkersByFranCode(@PathVariable int franCode) {
         List<EmployeeDTO> workers = employeeService.findByFranCode(franCode);
