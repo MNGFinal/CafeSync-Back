@@ -20,22 +20,30 @@ public class FranController {
 
     public final FranService franService;
 
-    // 가맹점 전체조회
-    @Operation(summary = "가맹점 목록 조회",
-               description = "가맹점 목록의 전체 조회", responses = {
-               @ApiResponse(responseCode = "200", description = "가맹점 목록 조회 성공"),
-               @ApiResponse(responseCode = "400", description = "가맹점 목록 조회 실패")
-    })
+    // 가맹점 전체조회 / 점장 조인
+     @Operation(summary = "가맹점 목록 전체 조회",
+            description = "모든 가맹점 목록을 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "가맹점 목록 조회 성공"),
+                    @ApiResponse(responseCode = "400", description = "가맹점 목록 조회 실패")
+            })
     @GetMapping("/mgment")
     public ResponseEntity<ResponseDTO> findAllFran() {
-
         List<FranDTO> franList = franService.findAllFran();
+        return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "가맹점 목록 조회 성공", franList));
+    }
 
-        System.out.println("franList컨트롤러단 = " + franList);
-
-        ResponseDTO response = new ResponseDTO(HttpStatus.OK, "가맹점 목록 조회 성공", franList);
-
-        return ResponseEntity.ok(response);
+    // ✅ 가맹점 검색 (이름으로 검색)
+    @Operation(summary = "가맹점 검색",
+            description = "가맹점 이름을 입력하여 검색합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "가맹점 검색 성공"),
+                    @ApiResponse(responseCode = "400", description = "가맹점 검색 실패")
+            })
+    @GetMapping("/mgment/{query}")
+    public ResponseEntity<ResponseDTO> findFranByName(@PathVariable("query") String query) {
+        List<FranDTO> franList = franService.findFransByQuery(query);
+        return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "가맹점 검색 성공", franList));
     }
 
     // 가맹점 등록
@@ -69,6 +77,9 @@ public class FranController {
     public ResponseEntity<ResponseDTO> deleteFran(@PathVariable int franCode) {
         franService.deleteFran(franCode);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "가맹점 삭제 성공", null));
     }
+
+
+
 }
