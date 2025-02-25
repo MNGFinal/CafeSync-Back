@@ -41,7 +41,9 @@ public class Pnl {
     @Column(name = "ratio", length = 255, nullable = false)
     private String ratio;  // 비율
 
-    // 🔥 다대다 관계 해결 (중간 테이블 사용)
+    @Column(name = "fran_code")
+    private int franCode;
+
     @OneToMany(mappedBy = "pnl", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PnlSlip> pnlSlips;
+    private List<PnlSlip> pnlSlips; // ✅ Pnl 삭제 시 관련된 PnlSlip도 삭제됨
 }

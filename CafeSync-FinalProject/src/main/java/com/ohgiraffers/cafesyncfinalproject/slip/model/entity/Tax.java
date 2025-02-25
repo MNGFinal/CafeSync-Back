@@ -1,9 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.slip.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -24,8 +21,9 @@ public class Tax {
     @Column(name = "tax_date", nullable = false)
     private LocalDate taxDate;  // DATE
 
-    @Column(name = "slip_code", nullable = false)
-    private int slipCode;       // INT
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "slip_code", nullable = false)
+    private Slip slip;
 
     @Column(name = "tax_val", nullable = false)
     private int taxVal;         // INT

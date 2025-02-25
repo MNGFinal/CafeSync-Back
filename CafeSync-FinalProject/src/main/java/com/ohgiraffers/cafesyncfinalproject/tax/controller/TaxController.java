@@ -34,14 +34,41 @@ public class TaxController {
         try {
             List<TaxDTO> taxList = taxService.findFranTaxes(franCode, startDate, endDate);
 
-            System.out.println("세금 계산서 데이터 = " + taxList);
-
             if (taxList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)
                         .body(new ResponseDTO(HttpStatus.NO_CONTENT, "해당 날짜의 데이터가 없습니다.", null));
             }
 
             return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "조회 성공", taxList));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+        }
+    }
+
+    // 세금 계산서 삭제
+    @DeleteMapping("/tax")
+    @Operation(summary = "선택한 세금 계산서 삭제", description = "체크된 세금 계산서(tax_id)만 삭제합니다.")
+    public ResponseEntity<ResponseDTO> deleteFranTaxes(
+            @Parameter(description = "삭제할 세금 계산서 ID 목록", required = true)
+            @RequestBody List<String> taxIds) {
+
+        try {
+            if (taxIds == null || taxIds.isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(new ResponseDTO(HttpStatus.BAD_REQUEST, "삭제할 세금 계산서가 없습니다.", null));
+            }
+
+            boolean isDeleted = taxService.deleteFranTaxes(taxIds);
+
+            if (isDeleted) {
+                return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "삭제 성공", null));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ResponseDTO(HttpStatus.NOT_FOUND, "삭제할 데이터가 없습니다.", null));
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
