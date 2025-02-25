@@ -163,8 +163,6 @@ public class SlipController {
     )
     public ResponseEntity<ResponseDTO> createPnl(@RequestBody PnlDTO pnlDTO) {
 
-        System.out.println("✅ pnlDTO 데이터: " + pnlDTO);
-
         try {
             // ✅ 서비스 호출 → 손익 계산서 저장
             pnlService.createPnl(pnlDTO);

@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "tbl_slip")
@@ -44,6 +45,8 @@ public class Slip {
     @Column(name = "fran_code", nullable = false)
     private int franCode;  // 가맹점 코드
 
+    @OneToMany(mappedBy = "slip", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Tax> taxes;
 
     // 엔티티 업데이트 메서드(예시)
     public void updateFromDTO(LocalDateTime slipDate,

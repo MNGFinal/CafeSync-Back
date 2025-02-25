@@ -27,7 +27,8 @@ public interface TaxRepository extends JpaRepository<Tax, String> {
                     "LEFT JOIN tbl_summary sm ON s.summary_code = sm.summary_code " +
                     "LEFT JOIN tbl_franchise f ON t.fran_code = f.fran_code " +  // ✅ 가맹점 정보 조인
                     "WHERE t.fran_code = :franCode " +
-                    "AND t.tax_date BETWEEN :startDate AND :endDate",
+                    "AND t.tax_date BETWEEN :startDate AND :endDate " +
+                    "ORDER BY t.tax_date DESC",  // ✅ 최신 날짜가 먼저 오도록 정렬 추가
             nativeQuery = true)
     List<Object[]> findByFranCodeAndDateRange(
             @Param("franCode") int franCode,
