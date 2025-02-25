@@ -48,6 +48,9 @@ public class Slip {
     @OneToMany(mappedBy = "slip", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Tax> taxes;
 
+    @OneToMany(mappedBy = "slip", cascade = CascadeType.ALL, orphanRemoval = true) // ✅ 추가된 부분
+    private List<PnlSlip> pnlSlips;  // ✅ Slip에 속한 PnlSlip 목록
+
     // 엔티티 업데이트 메서드(예시)
     public void updateFromDTO(LocalDateTime slipDate,
                               int venCode,

@@ -177,4 +177,71 @@ public class SlipController {
                     .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
         }
     }
+
+    @Operation(
+            summary = "특정 가맹점의 손익 계산서 목록 조회",
+            description = "주어진 가맹점 코드와 날짜 범위에 해당하는 손익계산서 목록을 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "조회 성공",
+                            content = @Content(schema = @Schema(implementation = ResponseDTO.class))),
+                    @ApiResponse(responseCode = "204", description = "해당 날짜의 손익 계산서 데이터가 없음"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+            }
+    )
+
+    // 손익 계산서 조회
+    @GetMapping("/pnl/{franCode}")
+    public ResponseEntity<ResponseDTO> getFranPnlList(
+            @Parameter(description = "가맹점 코드", example = "1000", required = true)
+            @PathVariable("franCode") int franCode,
+
+            @Parameter(description = "조회 시작 날짜 (YYYY-MM-DD)", example = "2024-02-01", required = true)
+            @RequestParam("startDate") String startDate,
+
+            @Parameter(description = "조회 종료 날짜 (YYYY-MM-DD)", example = "2024-02-28", required = true)
+            @RequestParam("endDate") String endDate) {
+
+        try {
+            // ✅ Service 호출: 손익계산서 목록 조회
+            List<PnlDTO> pnlList = pnlService.findFranPnls(franCode, startDate, endDate);
+
+            // 데이터가 없는 경우 NO_CONTENT(204)
+            if (pnlList.isEmpty()) {
+                return ResponseEntity
+                        .status(HttpStatus.NO_CONTENT)
+                        .body(new ResponseDTO(HttpStatus.NO_CONTENT, "해당 날짜의 손익 계산서 데이터가 없습니다.", null));
+            }
+
+            // 데이터가 있으면 OK(200) + 목록 반환
+            return ResponseEntity
+                    .ok(new ResponseDTO(HttpStatus.OK, "손익 계산서 조회 성공", pnlList));
+
+        } catch (Exception e) {
+            e.printStackTrace(); // 오류 로그 출력
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+        }
+    }
+
+    @DeleteMapping("/pnl")
+    @Operation(
+            summary = "손익 계산서 삭제",
+            description = "전달받은 pnlId 리스트에 해당하는 손익 계산서를 삭제합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "삭제 성공"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+            }
+    )
+    public ResponseEntity<ResponseDTO> deletePnlList(@RequestBody List<String> pnlIds) {
+        try {
+            pnlService.deletePnlList(pnlIds); // ✅ 서비스 호출하여 삭제 수행
+            return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "손익 계산서 삭제 성공", null));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+        }
+    }
 }

@@ -59,8 +59,6 @@ public class FranInvenService {
             // ✅ Setter 대신, 엔티티 내부 메서드 활용
             inven.updateStock(dto.getStockQty(), dto.getOrderQty(), dto.getRecommQty());
         });
-
-        // 4️⃣ Dirty Checking으로 자동 업데이트! (saveAll() 필요 없음)
     }
 
     // 재고 데이터 삭제
