@@ -25,36 +25,31 @@ public class FranService {
     private final FirebaseStorageService firebaseStorageService;
 
     // 가맹점 전체 조회
-    // 가맹점 검색
     // 점장 이름 Join
     public List<FranDTO> findAllFran() {
-        return convertToFranDTOList(franRepository.findAll());
-    }
 
-    public List<FranDTO> findFransByQuery(String query) {
-        return convertToFranDTOList(franRepository.findByFranNameContaining(query));
-    }
+        List<Fran> franList = franRepository.findAll();
 
-    // ✅ DTO 변환 공통 메서드
-    private List<FranDTO> convertToFranDTOList(List<Fran> franList) {
+        System.out.println("프랜차이즈 리스트 = " + franList);
+
         return franList.stream()
                 .map(fran -> {
-                    FranDTO franDTO = modelMapper.map(fran, FranDTO.class);
+                    FranDTO franDTO = modelMapper.map(fran, FranDTO.class); // ✅ FranDTO 변환
 
-                    if (fran.getEmployee() != null) {
-                        franDTO.setEmpCode(fran.getEmployee().getEmpCode());
-                        franDTO.setEmpName(fran.getEmployee().getEmpName());
-                    }
+                    // ✅ 점장이름 가져오기
+                    franDTO.setEmpCode(fran.getEmployee().getEmpCode());
+                    franDTO.setEmpName(fran.getEmployee().getEmpName());
 
+                    // ✅ Firebase Storage에서 이미지 URL 변환
                     if (franDTO.getFranImage() != null) {
-                        franDTO.setFranImage(firebaseStorageService.convertGsUrlToHttp(franDTO.getFranImage()));
+                        franDTO.setFranImage(
+                                firebaseStorageService.convertGsUrlToHttp(franDTO.getFranImage())
+                        );
                     }
-
                     return franDTO;
                 })
                 .collect(Collectors.toList());
     }
-
 
     // 가맹점 등록
     @Transactional
@@ -80,8 +75,6 @@ public class FranService {
             throw new RuntimeException("이미 삭제되었거나 존재하지 않는 가맹점입니다.");
         }
     }
-
-
 }
 
 
