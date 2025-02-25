@@ -14,4 +14,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
     // 스케줄 조회 - 가맹점 코드별로 상이하게
     List<Schedule> findByFranCode(@Param("franCode") int franCode);
 
+    Schedule findByScheduleCode(@Param("scheduleCode") int scheduleCode);
+
 }
