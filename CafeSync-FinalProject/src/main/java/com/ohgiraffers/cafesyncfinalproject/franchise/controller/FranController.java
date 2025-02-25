@@ -57,6 +57,7 @@ public class FranController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    
     // ✅ 가맹점 삭제 (폐점)
     @Operation(summary = "가맹점 삭제",
             description = "가맹점 삭제 기능", responses ={
