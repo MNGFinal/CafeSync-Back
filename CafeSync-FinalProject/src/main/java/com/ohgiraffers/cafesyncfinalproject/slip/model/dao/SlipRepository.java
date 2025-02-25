@@ -26,4 +26,5 @@ public interface SlipRepository extends JpaRepository<Slip, Integer> {
                                  @Param("startDate") String startDate,
                                  @Param("endDate") String endDate);
 
+    void deleteBySlipCodeIn(List<Integer> slipCodes);
 }

@@ -20,6 +20,7 @@ public class PnlSlip {
     @JoinColumn(name = "pnl_id", nullable = false)
     private Pnl pnl;  // 손익 계산서 (Many)
 
-    @Column(name = "slip_code", nullable = false)
-    private int slipCode; // ✅ 전표 ID
+    @ManyToOne // ✅ Slip과 관계 추가
+    @JoinColumn(name = "slip_code", referencedColumnName = "slip_code", nullable = false)
+    private Slip slip; // ✅ 전표 ID를 Slip 엔티티와 매핑
 }

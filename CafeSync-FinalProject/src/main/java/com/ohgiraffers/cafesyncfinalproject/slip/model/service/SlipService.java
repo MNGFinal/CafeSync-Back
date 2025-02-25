@@ -1,11 +1,14 @@
 package com.ohgiraffers.cafesyncfinalproject.slip.model.service;
 
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.VendorDTO;
+import com.ohgiraffers.cafesyncfinalproject.slip.model.dao.PnlRepository;
+import com.ohgiraffers.cafesyncfinalproject.slip.model.dao.PnlSlipRepository;
 import com.ohgiraffers.cafesyncfinalproject.slip.model.dao.SlipRepository;
 import com.ohgiraffers.cafesyncfinalproject.slip.model.dto.ActDTO;
 import com.ohgiraffers.cafesyncfinalproject.slip.model.dto.SlipDTO;
 import com.ohgiraffers.cafesyncfinalproject.slip.model.dto.SlipInsertDTO;
 import com.ohgiraffers.cafesyncfinalproject.slip.model.dto.SummaryDTO;
+import com.ohgiraffers.cafesyncfinalproject.slip.model.entity.Pnl;
 import com.ohgiraffers.cafesyncfinalproject.slip.model.entity.Slip;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +28,8 @@ import java.util.stream.Collectors;
 public class SlipService {
 
     private final SlipRepository slipRepository;
+    private final PnlRepository pnlRepository;
+    private final PnlSlipRepository pnlSlipRepository;
 
     // 가맹점 전표 조회
     public List<SlipDTO> findFranSlips(int franCode, String startDate, String endDate) {
@@ -98,11 +104,33 @@ public class SlipService {
     // 전표 삭제
     @Transactional
     public void deleteSlipList(List<Integer> slipCodes) {
-        for (Integer slipCode : slipCodes) {
-            // 해당 slipCode가 존재하는 경우에만 삭제합니다.
-            if (slipRepository.existsById(slipCode)) {
-                slipRepository.deleteById(slipCode);
-            }
-        }
+        // ✅ 손익계산서 ID 목록 조회 (String 타입 유지)
+        List<String> pnlIds = pnlSlipRepository.findPnlIdsBySlipCodes(slipCodes);
+
+        // ✅ PnlSlip 먼저 삭제
+        pnlSlipRepository.deleteBySlip_SlipCodeIn(slipCodes);
+
+        // ✅ Slip 삭제
+        slipRepository.deleteBySlipCodeIn(slipCodes);
+
+        // ✅ 손익계산서 금액 업데이트 (String 타입 유지)
+        pnlIds.forEach(this::updatePnlAmounts);
     }
+
+    @Transactional
+    public void updatePnlAmounts(String pnlId) {
+        // ✅ `pnlId`를 String 타입으로 유지
+        Integer updatedRevenue = pnlSlipRepository.getUpdatedRevenue(pnlId);
+        Integer updatedExpense = pnlSlipRepository.getUpdatedExpense(pnlId);
+        int updatedNetProfit = (updatedRevenue != null ? updatedRevenue : 0) -
+                (updatedExpense != null ? updatedExpense : 0);
+
+        // ✅ 순이익률 계산 (수익이 0이면 0%)
+        String updatedRatio = (updatedRevenue != null && updatedRevenue > 0) ?
+                String.format("%.2f%%", (updatedNetProfit * 100.0) / updatedRevenue) : "0.00%";
+
+        // ✅ `pnlId` 타입을 String으로 유지
+        pnlRepository.updatePnlAmounts(pnlId, updatedRevenue, updatedExpense, updatedNetProfit, updatedRatio);
+    }
+
 }

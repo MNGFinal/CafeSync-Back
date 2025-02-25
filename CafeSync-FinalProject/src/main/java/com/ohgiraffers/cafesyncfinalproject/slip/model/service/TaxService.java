@@ -1,7 +1,9 @@
 package com.ohgiraffers.cafesyncfinalproject.slip.model.service;
 
+import com.ohgiraffers.cafesyncfinalproject.slip.model.dao.SlipRepository;
 import com.ohgiraffers.cafesyncfinalproject.slip.model.dao.TaxRepository;
 import com.ohgiraffers.cafesyncfinalproject.slip.model.dto.TaxDTO;
+import com.ohgiraffers.cafesyncfinalproject.slip.model.entity.Slip;
 import com.ohgiraffers.cafesyncfinalproject.slip.model.entity.Tax;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ public class TaxService {
 
     private final TaxRepository taxRepository;
     private final ModelMapper modelMapper;
+    private final SlipRepository slipRepository;
 
     // 세금 계산서 생성 (세액 = 넘어온 금액의 10%로 계산)
     @Transactional
@@ -34,20 +37,25 @@ public class TaxService {
             }
 
             // 세액은 넘어온 금액(taxVal)의 10% 계산 (소수점 버림)
-            int computedTaxVal = (int)(dto.getTaxVal() * 0.1);
+            int computedTaxVal = (int) (dto.getTaxVal() * 0.1);
+
+            // ✅ slipCode를 이용해 Slip 엔티티 조회 (예외 처리 추가)
+            Slip slip = slipRepository.findById(dto.getSlipCode())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 slipCode가 존재하지 않습니다: " + dto.getSlipCode()));
 
             // 엔티티 변환 (ModelMapper 사용 또는 Builder 사용)
             Tax tax = Tax.builder()
                     .taxId(dto.getTaxId())
                     .taxDate(taxDate)
-                    .slipCode(dto.getSlipCode())
                     .taxVal(computedTaxVal)
                     .franCode(dto.getFranCode()) // ✅ 추가됨
+                    .slip(slip) // ✅ Slip 엔티티 연결
                     .build();
 
             taxRepository.save(tax);
         }
     }
+
 
     private String createNextTaxInvoiceNumber(LocalDate taxDate) {
 
