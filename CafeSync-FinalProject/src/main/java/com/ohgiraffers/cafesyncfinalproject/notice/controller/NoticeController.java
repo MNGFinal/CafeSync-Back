@@ -48,4 +48,12 @@ public class NoticeController {
         return ResponseEntity
                 .ok().body(new ResponseDTO(HttpStatus.OK, "노트 검색 성공", noticeService.selectNoticeBySearch(search)));
     }
+
+    @Operation(summary = "조회수 증가", description = "공지사항 조회수를 증가시킵니다.")
+    @PostMapping("/notices/{noticeCode}/increase-view")
+    public ResponseEntity<ResponseDTO> increaseViewCount(
+            @Parameter(description = "공지사항 코드", example = "1") @PathVariable int noticeCode) {
+        ResponseDTO responseDTO = noticeService.increaseViewCount(noticeCode);
+        return ResponseEntity.ok(responseDTO);
+    }
 }
