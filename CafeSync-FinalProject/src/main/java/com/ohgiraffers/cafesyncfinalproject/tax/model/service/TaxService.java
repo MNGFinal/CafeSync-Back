@@ -11,6 +11,7 @@ import com.ohgiraffers.cafesyncfinalproject.tax.model.dto.TaxDTO;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -90,6 +91,18 @@ public class TaxService {
                 (int) row[4],      // franCode
                 franchise          // franchise 정보 추가
         );
+    }
+
+    // 세금 계산서 삭제
+    @Transactional
+    public boolean deleteFranTaxes(List<String> taxIds) {
+        try {
+            taxRepository.deleteAllById(taxIds);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
 
