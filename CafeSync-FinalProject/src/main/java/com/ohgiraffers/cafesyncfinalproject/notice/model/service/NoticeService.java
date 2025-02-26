@@ -1,20 +1,23 @@
 package com.ohgiraffers.cafesyncfinalproject.notice.model.service;
 
 import com.ohgiraffers.cafesyncfinalproject.common.ResponseDTO;
+import com.ohgiraffers.cafesyncfinalproject.notice.model.dao.NoticeAccountRepository;
+import com.ohgiraffers.cafesyncfinalproject.notice.model.dao.NoticeInsertRepository;
 import com.ohgiraffers.cafesyncfinalproject.notice.model.dao.NoticeRepository;
 import com.ohgiraffers.cafesyncfinalproject.notice.model.dto.NoticeDTO;
+import com.ohgiraffers.cafesyncfinalproject.notice.model.dto.NoticeInsertDTO;
+import com.ohgiraffers.cafesyncfinalproject.notice.model.entity.Account;
 import com.ohgiraffers.cafesyncfinalproject.notice.model.entity.Notice;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import com.ohgiraffers.cafesyncfinalproject.notice.model.entity.NoticeInsert;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
+import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +25,8 @@ import java.util.stream.Collectors;
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
+    private final NoticeAccountRepository noticeAccountRepository;
+    private final NoticeInsertRepository noticeInsertRepository;
     private final ModelMapper modelMapper;
 
     public List<NoticeDTO> getAllNotices() {
@@ -85,5 +90,46 @@ public class NoticeService {
         noticeRepository.save(notice); // 변경된 공지사항 저장
 
         return new ResponseDTO(200, "조회수 증가 성공");
+    }
+
+    @Transactional
+    public int insertNotice(NoticeInsertDTO noticeInsertDTO, Principal principal) {
+        // 사용자 정보 조회
+        Optional<Account> accountOptional = noticeAccountRepository.findById(principal.getName());
+        if (accountOptional.isEmpty()) {
+            throw new RuntimeException("사용자 정보가 없습니다.");
+        }
+        Account account = accountOptional.get();
+
+        // 권한이 1인 사용자만 등록 가능
+        if (account.getAuthority() != 1) {
+            throw new RuntimeException("등록 권한이 없습니다.");
+        }
+
+        // DTO -> Entity 변환
+        NoticeInsert noticeInsert = NoticeInsert.builder()
+                .noticeTitle(noticeInsertDTO.getNoticeTitle())
+                .noticeContent(noticeInsertDTO.getNoticeContent())
+                .noticeDate(LocalDateTime.now())  // 공지사항 작성 시간을 현재 시간으로 설정
+                .noticeViews(0)  // 초기 조회수는 0
+                .userId(principal.getName())  // 사용자 ID는 principal에서 가져옴
+                .attachment(noticeInsertDTO.getAttachment())
+                .build();
+
+        // 공지사항 저장
+        NoticeInsert savedNotice = noticeInsertRepository.save(noticeInsert);
+
+        // 저장된 공지사항의 noticeCode 반환
+        return savedNotice.getNoticeCode();
+    }
+
+
+    // 사용자 권한 조회 메서드
+    public int getUserAuthority(String userId) {
+        Optional<Account> accountOptional = noticeAccountRepository.findById(userId);
+        if (accountOptional.isEmpty()) {
+            throw new RuntimeException("사용자 정보가 없습니다.");
+        }
+        return accountOptional.get().getAuthority();
     }
 }

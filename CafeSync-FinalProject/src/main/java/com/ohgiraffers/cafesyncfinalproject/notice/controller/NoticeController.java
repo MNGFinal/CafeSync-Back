@@ -1,7 +1,9 @@
 package com.ohgiraffers.cafesyncfinalproject.notice.controller;
 
 import com.ohgiraffers.cafesyncfinalproject.common.ResponseDTO;
+import com.ohgiraffers.cafesyncfinalproject.note.model.dto.NoteInsertDTO;
 import com.ohgiraffers.cafesyncfinalproject.notice.model.dto.NoticeDTO;
+import com.ohgiraffers.cafesyncfinalproject.notice.model.dto.NoticeInsertDTO;
 import com.ohgiraffers.cafesyncfinalproject.notice.model.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Tag(name = "공지사항 노트관련 스웨거 연동")
@@ -55,5 +58,33 @@ public class NoticeController {
             @Parameter(description = "공지사항 코드", example = "1") @PathVariable int noticeCode) {
         ResponseDTO responseDTO = noticeService.increaseViewCount(noticeCode);
         return ResponseEntity.ok(responseDTO);
+    }
+
+    @Operation(summary ="공지사항 등록", description = "공지사항을 등록")
+    @PostMapping("/notices")
+    public ResponseEntity<ResponseDTO> insertNotice(@RequestBody NoticeInsertDTO noticeInsertDTO, Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ResponseDTO(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다.", null));
+        }
+        try {
+            // 서비스 호출 전에 권한 체크
+            String userId = principal.getName();
+            int authority = noticeService.getUserAuthority(userId); // 권한 체크
+
+            // authority 가 1인 경우에만 등록 가능
+            if (authority != 1) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(new ResponseDTO(HttpStatus.FORBIDDEN, "등록 권한이 없습니다.", null));
+            }
+
+            // 등록 처리
+            int noticeCode = noticeService.insertNotice(noticeInsertDTO, principal);
+            return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "노트 등록 성공", noticeCode));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "노트 등록 실패", e.getMessage()));
+        }
     }
 }
