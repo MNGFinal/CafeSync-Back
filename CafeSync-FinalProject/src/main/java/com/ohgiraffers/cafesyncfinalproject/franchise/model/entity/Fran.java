@@ -40,4 +40,43 @@ public class Fran {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "emp_code", referencedColumnName = "emp_code", insertable = false, updatable = false)
     private Employee employee;
+
+
+
+
+    /* ✅ Setter 스타일 Builder 패턴 적용 */
+    public Fran franName(String var) {
+        this.franName = var;
+        return this;
+    }
+
+    public Fran franAddr(String var) {
+        this.franAddr = var;
+        return this;
+    }
+
+    public Fran franPhone(String var) {
+        this.franPhone = var;
+        return this;
+    }
+
+    public Fran franImage(String var) {
+        this.franImage = var;
+        return this;
+    }
+
+    public Fran memo(String var) {
+        this.memo = var;
+        return this;
+    }
+
+    public Fran empCode(int var) {
+        this.empCode = var;
+        return this;
+    }
+
+    /* ✅ 모든 필드를 포함한 builder() 메서드 */
+    public Fran builder() {
+        return new Fran(franCode, franName, franAddr, franPhone, franImage, memo, empCode, employee);
+    }
 }
