@@ -2,6 +2,7 @@ package com.ohgiraffers.cafesyncfinalproject.schedule.controller;
 
 import com.ohgiraffers.cafesyncfinalproject.common.ResponseDTO;
 import com.ohgiraffers.cafesyncfinalproject.schedule.model.dto.ScheduleDTO;
+import com.ohgiraffers.cafesyncfinalproject.schedule.model.entity.Schedule;
 import com.ohgiraffers.cafesyncfinalproject.schedule.model.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -57,15 +59,48 @@ public class ScheduleController {
     )
     @PostMapping("/schedule")
     public ResponseEntity<ResponseDTO> registSchedule(@RequestBody List<ScheduleDTO> scheduleList) {
-//        System.out.println("scheduleList = " + scheduleList);
         if (scheduleList.isEmpty()) {
             return ResponseEntity.badRequest()
                     .body(new ResponseDTO(HttpStatus.BAD_REQUEST, "유효하지 않은 형식으로 잘못된 요청", null));
         }
         List<ScheduleDTO> savedSchedules = scheduleService.saveSchedule(scheduleList);
-//        System.out.println("savedSchedules = " + savedSchedules);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseDTO(HttpStatus.CREATED, "스케줄 등록 성공", savedSchedules));
     }
 
+    @PutMapping("/schedule")
+    public ResponseEntity<ResponseDTO> modifySchedule(@RequestBody List<ScheduleDTO> updatedScheduleRequest) {
+        System.out.println("updatedScheduleRequest = " + updatedScheduleRequest);
+
+        try {
+            List<ScheduleDTO> modifiedSchedules = new ArrayList<>();
+
+            for (ScheduleDTO modifiedSchedule : updatedScheduleRequest) {
+                ScheduleDTO existingSchedule = scheduleService.findByScheduleCode(modifiedSchedule.getScheduleCode());
+                System.out.println("existingSchedule = " + existingSchedule);
+
+                if (existingSchedule == null) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND)
+                            .body(new ResponseDTO(HttpStatus.NOT_FOUND, "스케줄을 찾을 수 없음: " + modifiedSchedule.getScheduleCode(), null));
+                }
+
+                existingSchedule.setEmpCode(modifiedSchedule.getEmpCode());
+                existingSchedule.setScheduleDivision(modifiedSchedule.getScheduleDivision());
+                existingSchedule.setScheduleDate(modifiedSchedule.getScheduleDate());
+                existingSchedule.setEmpName(modifiedSchedule.getEmpName());
+
+                System.out.println("set 한 existingSchedule = " + existingSchedule);
+
+                ScheduleDTO savedSchedule = scheduleService.saveSchedule(existingSchedule);
+                System.out.println("savedSchedule = " + savedSchedule);
+                savedSchedule.setEmpName(existingSchedule.getEmpName());
+                System.out.println("꼼수 최종 데이터 = " + savedSchedule);
+                modifiedSchedules.add(savedSchedule);
+            }
+            return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "스케줄 수정 성공", modifiedSchedules));  // 수정된 스케줄 반환
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류", null));
+        }
+    }
 }
