@@ -24,12 +24,11 @@ public class FranService {
     private final ModelMapper modelMapper;
     private final FirebaseStorageService firebaseStorageService;
 
-    // 가맹점 전체 조회
-    // 점장 이름 Join
+    // ✅ 가맹점 전체 조회
     public List<FranDTO> findAllFran() {
         return convertToFranDTOList(franRepository.findAll());
     }
-
+    // ✅ 가맹점 검색
     public List<FranDTO> findFransByQuery(String query) {
         return convertToFranDTOList(franRepository.findByFranNameContaining(query));
     }
@@ -54,7 +53,7 @@ public class FranService {
                 .collect(Collectors.toList());
     }
 
-    // 가맹점 등록
+    // ✅ 가맹점 등록
     @Transactional
     public FranDTO registFran(FranDTO franDTO) {
 
@@ -68,7 +67,7 @@ public class FranService {
         return modelMapper.map(savedFran, FranDTO.class);
     }
 
-
+    // ✅ 가맹점 삭제
     @Transactional
     public void deleteFran(int franCode) {
         try {
@@ -78,6 +77,32 @@ public class FranService {
             throw new RuntimeException("이미 삭제되었거나 존재하지 않는 가맹점입니다.");
         }
     }
+
+    // ✅ 가맹점 수정
+    @Transactional
+    public FranDTO modifyFran(FranDTO franDTO) {
+
+        // 1️⃣ 기존 가맹점 찾기
+        Fran foundFran = franRepository.findById(franDTO.getFranCode())
+                .orElseThrow(IllegalArgumentException::new);
+
+        System.out.println("DTO 에서 찾은 Entity 값 = " + foundFran);
+
+        // 2️⃣ 학원 스타일의 Builder 패턴 적용하여 값 변경
+        foundFran = foundFran.franName(franDTO.getFranName())
+                  .franPhone(franDTO.getFranPhone())
+                  .memo(franDTO.getMemo())
+                  .empCode(franDTO.getEmpCode())
+                  .builder();
+
+        // 3️⃣ save() 호출 → JPA가 ID를 보고 UPDATE 수행
+        Fran updatedFran = franRepository.save(foundFran);
+
+        // 4️⃣ DTO 변환 후 반환
+        return modelMapper.map(updatedFran, FranDTO.class);
+    }
+
+
 }
 
 

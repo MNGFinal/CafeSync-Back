@@ -20,7 +20,7 @@ public class FranController {
 
     public final FranService franService;
 
-    // 가맹점 전체조회 / 점장 조인
+    // ✅ 가맹점 전체조회 / 점장 조인
     @Operation(summary = "가맹점 목록 전체 조회",
             description = "모든 가맹점 목록을 조회합니다.",
             responses = {
@@ -46,7 +46,7 @@ public class FranController {
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "가맹점 검색 성공", franList));
     }
 
-    // 가맹점 등록
+    // ✅ 가맹점 등록
     @Operation(summary = "가맹점 등록",
                description = "가맹점 등록 기능", responses ={
                @ApiResponse(responseCode = "201", description = "가맹점 등록 성공"),
@@ -80,4 +80,26 @@ public class FranController {
 
         return ResponseEntity.noContent().build();
     }
+
+    // ✅ 가맹점 수정
+    @Operation(summary = "가맹점 수정",
+            description = "가맹점 수정 기능", responses = {
+            @ApiResponse(responseCode = "200", description = "가맹점 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터"),
+            @ApiResponse(responseCode = "409", description = "가맹점 수정 충돌 (다른 프로세스에서 변경 중)"),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+    })
+    @PutMapping("/mgment/{franCode}") // ✅ URL에서 franCode 받기
+    public ResponseEntity<ResponseDTO> modifyFran(
+            @PathVariable int franCode,  // ✅ URL에서 franCode 값 받기
+            @RequestBody FranDTO franDTO) { // ✅ 요청 바디에서 DTO 받기
+
+        FranDTO franData = franService.modifyFran(franDTO);
+
+        System.out.println("franDTO에 뭐가들었을까?" + franDTO);
+
+
+        return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "가맹점 수정 완료", franData));
+    }
+
 }
