@@ -9,11 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,9 +22,7 @@ public class ScheduleService {
     private final ModelMapper modelMapper;
 
     public List<ScheduleDTO> findByFranCode(int franCode) {
-//        System.out.println("스케줄 서비스 franCode = " + franCode);
         List<Schedule> schedules = scheduleRepository.findByFranCode(franCode);
-//        System.out.println("스케줄 서비스 단의 schedules = " + schedules);
 
         return schedules.stream()
                 .map(schedule -> {
@@ -71,5 +64,33 @@ public class ScheduleService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public ScheduleDTO findByScheduleCode(int scheduleCode) {
+        Schedule findSchedule = scheduleRepository.findByScheduleCode(scheduleCode);
+
+        if (findSchedule != null) {
+            ScheduleDTO scheduleDTO = modelMapper.map(findSchedule, ScheduleDTO.class);
+            scheduleDTO.setEmpName(findSchedule.getEmployee().getEmpName());
+            return scheduleDTO;
+        } else {
+            return null;
+        }
+    }
+
+    @Transactional
+    public ScheduleDTO saveSchedule(ScheduleDTO scheduleDTO) {
+        Schedule schedule = modelMapper.map(scheduleDTO, Schedule.class);
+        Schedule savedSchedule = scheduleRepository.save(schedule);
+        ScheduleDTO savedScheduleDTO = modelMapper.map(savedSchedule, ScheduleDTO.class);
+        System.out.println("서비스 savedScheduleDTO = " + savedScheduleDTO);
+//        savedScheduleDTO.setEmpName(schedule.getEmployee().getEmpName());
+//        System.out.println("empName 추가 = " + savedScheduleDTO);
+
+        return savedScheduleDTO;
+    }
+
+//    public void deleteSchedule(Long scheduleCode) {
+//        scheduleRepository.deleteById(scheduleCode);  // DB에서 삭제
+//    }
 
 }
