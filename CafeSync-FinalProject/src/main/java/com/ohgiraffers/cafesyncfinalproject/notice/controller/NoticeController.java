@@ -1,7 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.notice.controller;
 
 import com.ohgiraffers.cafesyncfinalproject.common.ResponseDTO;
-import com.ohgiraffers.cafesyncfinalproject.note.model.dto.NoteInsertDTO;
 import com.ohgiraffers.cafesyncfinalproject.notice.model.dto.NoticeDTO;
 import com.ohgiraffers.cafesyncfinalproject.notice.model.dto.NoticeInsertDTO;
 import com.ohgiraffers.cafesyncfinalproject.notice.model.service.NoticeService;
@@ -86,5 +85,12 @@ public class NoticeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "노트 등록 실패", e.getMessage()));
         }
+    }
+
+    @Operation(summary = "공지사항 수정", description = "공지사항 수정")
+    @PutMapping(value = "/notices")
+    public ResponseEntity<ResponseDTO> updateNote(@RequestBody NoticeInsertDTO noticeInsertDTO) {
+
+        return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "공지사항 수정 성공",  noticeService.updateNotice(noticeInsertDTO)));
     }
 }
