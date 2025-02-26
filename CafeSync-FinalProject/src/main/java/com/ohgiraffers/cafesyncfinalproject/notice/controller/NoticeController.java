@@ -60,6 +60,7 @@ public class NoticeController {
         return ResponseEntity.ok(responseDTO);
     }
 
+    @Operation(summary ="공지사항 등록", description = "공지사항을 등록")
     @PostMapping("/notices")
     public ResponseEntity<ResponseDTO> insertNotice(@RequestBody NoticeInsertDTO noticeInsertDTO, Principal principal) {
         if (principal == null) {
@@ -86,5 +87,4 @@ public class NoticeController {
                     .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "노트 등록 실패", e.getMessage()));
         }
     }
-
 }
