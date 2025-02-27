@@ -93,4 +93,18 @@ public class NoticeController {
 
         return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "공지사항 수정 성공",  noticeService.updateNotice(noticeInsertDTO)));
     }
+
+    @Operation(summary = "공지사항 삭제", description = "공지사항 삭제")
+    @DeleteMapping("/notices/{noticeCode}")
+    public ResponseEntity<ResponseDTO> deleteNotice(@Parameter(description = "공지사항 코드", example = "1") @PathVariable int noticeCode) {
+
+        try {
+            noticeService.deleteNotice(noticeCode);
+            return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "공지사항 삭제 성공", null));
+        } catch (Exception e) {
+            e.printStackTrace(); // ✅ 전체 스택 트레이스 출력 (콘솔에서 확인 가능)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "공지사항 삭제 실패", e.getMessage()));
+        }
+    }
 }

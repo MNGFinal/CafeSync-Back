@@ -163,4 +163,8 @@ public class NoticeService {
         return "공지사항 업데이트 성공";
     }
 
+    public void deleteNotice(int noticeCode) {
+        noticeInsertRepository.deleteById(noticeCode);
+    }
+
 }
