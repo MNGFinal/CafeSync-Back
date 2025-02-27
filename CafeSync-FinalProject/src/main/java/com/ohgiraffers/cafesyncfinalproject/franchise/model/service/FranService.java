@@ -88,6 +88,10 @@ public class FranService {
 
         System.out.println("DTO 에서 찾은 Entity 값 = " + foundFran);
 
+
+
+
+
         // 2️⃣ 학원 스타일의 Builder 패턴 적용하여 값 변경
         foundFran = foundFran.franName(franDTO.getFranName())
                   .franPhone(franDTO.getFranPhone())
