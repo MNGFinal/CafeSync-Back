@@ -79,11 +79,11 @@ public class NoticeController {
 
             // 등록 처리
             int noticeCode = noticeService.insertNotice(noticeInsertDTO, principal);
-            return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "노트 등록 성공", noticeCode));
+            return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "공지사항 등록 성공", noticeCode));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "노트 등록 실패", e.getMessage()));
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "공지사항 등록 실패", e.getMessage()));
         }
     }
 
