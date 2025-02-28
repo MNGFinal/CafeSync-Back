@@ -15,13 +15,13 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/fran")
+@RequestMapping("/api")
 @Tag(name = "메뉴관련 스웨거 연동")
 public class MenuController {
 
     private final MenuService menuService;
 
-    // 카테고리 코드로 메뉴 조회
+    // 카테고리 코드로 메뉴 조회 (가맹점)
 
     @Operation(summary = "카테고리별 메뉴 조회",
                description = "카테고리별 메뉴 전체 조회",
@@ -29,8 +29,8 @@ public class MenuController {
                @ApiResponse(responseCode = "200", description = "카테고리별 메뉴 조회 성공"),
                @ApiResponse(responseCode = "400", description = "카테고리별 메뉴 조회 실패")
     })
-    @GetMapping("/menus/{categoryCode}")
-    public ResponseEntity<ResponseDTO> getMenuList(@PathVariable("categoryCode") int categoryCode, @RequestParam("query") String query){
+    @GetMapping("/fran/menus/{categoryCode}")
+    public ResponseEntity<ResponseDTO> getMenuList(@PathVariable("categoryCode") int categoryCode,  @RequestParam(value = "query", required = false) String query){
 
         System.out.println("프론트에서 넘어온 카테고리 = " + categoryCode);
 
@@ -40,7 +40,9 @@ public class MenuController {
 
         ResponseDTO response = new ResponseDTO(HttpStatus.OK, "카테고리별 메뉴 조회 성공", menuList);
 
-        return ResponseEntity.ok(response);
+        System.out.println("검색할 때 받은 값 = " + query);
+
+        return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK,"메뉴 조회 성공", menuList));
     }
 
     @Operation(summary = "메뉴 Sold Out",
@@ -49,8 +51,8 @@ public class MenuController {
                     @ApiResponse(responseCode = "200", description = "Sold Out 설정 성공"),
                     @ApiResponse(responseCode = "400", description = "Sold Out 설정 실패")
             })
-    // Sold Out 기능
-    @PutMapping("/menus/{menuCode}")
+    // Sold Out 기능 (가맹점)
+    @PutMapping("/fran/menus/{menuCode}")
     public ResponseEntity<ResponseDTO> menuSold(@PathVariable("menuCode") int menuCode) {
 
         System.out.println("프론트에서 넘어온 메뉴코드 = " + menuCode);
@@ -65,7 +67,39 @@ public class MenuController {
         return ResponseEntity.ok(response);
     }
 
+    // 메뉴 수정 (본사)
+    @Operation(summary = "메뉴 수정(본사)",
+               description = "본사 메뉴 수정 기능",
+               responses = {
+                       @ApiResponse(responseCode = "200", description = "메뉴 수정 성공"),
+                       @ApiResponse(responseCode = "400", description = "잘못된 요청 형식"),
+                       @ApiResponse(responseCode = "404", description = "메뉴를 찾을 수 없음"),
+                       @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+               })
+    @PutMapping("/hq/menus/{menuCode}")
+    public ResponseEntity<ResponseDTO> modifyMenu(@PathVariable int menuCode, @RequestBody MenuDTO menuDTO) {
 
+        MenuDTO menuData = menuService.modifyMenu(menuDTO);
+
+        return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK,"메뉴 수정 성공", menuData));
+
+    }
+
+    // 메뉴 삭제 (본사)
+    @Operation(summary = "메뉴 삭제(본사)",
+               description = "본사 메뉴 삭제 기능",
+               responses = {
+                       @ApiResponse(responseCode = "200", description = "메뉴 삭제 성공"),
+                       @ApiResponse(responseCode = "400", description = "잘못된 요청 (유효하지 않은 menuCode)"),
+                       @ApiResponse(responseCode = "404", description = "삭제하려는 메뉴를 찾을 수 없음"),
+                       @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+               })
+    @DeleteMapping("hq/menus/{menuCode}")
+    public ResponseEntity<ResponseDTO> deleteMenu(@PathVariable int menuCode) {
+        menuService.deleteMenu(menuCode);
+
+        return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "메뉴 삭제 성공", null));
+    }
 
 
 }

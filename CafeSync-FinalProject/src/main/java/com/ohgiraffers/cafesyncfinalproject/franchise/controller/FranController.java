@@ -96,6 +96,8 @@ public class FranController {
 
         FranDTO franData = franService.modifyFran(franDTO);
 
+//        franDTO.setFranCode(franCode);
+
         System.out.println("franDTO에 뭐가들었을까?" + franDTO);
 
 

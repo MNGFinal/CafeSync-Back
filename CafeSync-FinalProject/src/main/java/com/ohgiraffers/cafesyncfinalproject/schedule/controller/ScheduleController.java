@@ -68,16 +68,23 @@ public class ScheduleController {
                 .body(new ResponseDTO(HttpStatus.CREATED, "스케줄 등록 성공", savedSchedules));
     }
 
+    @Operation(
+            summary = "스케줄 수정",
+            description = "가맹점이 기존 스케줄을 수정하여 캘린더에 표시합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "스케줄 수정 성공"),
+                    @ApiResponse(responseCode = "400", description = "유효하지 않은 형식으로 잘못된 요청"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류")
+            }
+    )
     @PutMapping("/schedule")
     public ResponseEntity<ResponseDTO> modifySchedule(@RequestBody List<ScheduleDTO> updatedScheduleRequest) {
-        System.out.println("updatedScheduleRequest = " + updatedScheduleRequest);
 
         try {
             List<ScheduleDTO> modifiedSchedules = new ArrayList<>();
 
             for (ScheduleDTO modifiedSchedule : updatedScheduleRequest) {
                 ScheduleDTO existingSchedule = scheduleService.findByScheduleCode(modifiedSchedule.getScheduleCode());
-                System.out.println("existingSchedule = " + existingSchedule);
 
                 if (existingSchedule == null) {
                     ResponseEntity.status(HttpStatus.NOT_FOUND)
