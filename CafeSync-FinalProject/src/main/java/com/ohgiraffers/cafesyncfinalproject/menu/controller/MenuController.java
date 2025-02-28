@@ -42,7 +42,7 @@ public class MenuController {
 
         System.out.println("검색할 때 받은 값 = " + query);
 
-        return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK,"메뉴 수정 성공", menuList));
+        return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK,"메뉴 조회 성공", menuList));
     }
 
     @Operation(summary = "메뉴 Sold Out",
@@ -85,7 +85,21 @@ public class MenuController {
 
     }
 
+    // 메뉴 삭제 (본사)
+    @Operation(summary = "메뉴 삭제(본사)",
+               description = "본사 메뉴 삭제 기능",
+               responses = {
+                       @ApiResponse(responseCode = "200", description = "메뉴 삭제 성공"),
+                       @ApiResponse(responseCode = "400", description = "잘못된 요청 (유효하지 않은 menuCode)"),
+                       @ApiResponse(responseCode = "404", description = "삭제하려는 메뉴를 찾을 수 없음"),
+                       @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+               })
+    @DeleteMapping("hq/menus/{menuCode}")
+    public ResponseEntity<ResponseDTO> deleteMenu(@PathVariable int menuCode) {
+        menuService.deleteMenu(menuCode);
 
+        return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "메뉴 삭제 성공", null));
+    }
 
 
 }

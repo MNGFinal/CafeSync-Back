@@ -5,6 +5,7 @@ import com.ohgiraffers.cafesyncfinalproject.franchise.model.entity.Fran;
 import com.ohgiraffers.cafesyncfinalproject.menu.model.dao.MenuRepository;
 import com.ohgiraffers.cafesyncfinalproject.menu.model.dto.MenuDTO;
 import com.ohgiraffers.cafesyncfinalproject.menu.model.entity.Menu;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -71,4 +72,13 @@ public class MenuService {
 
     }
 
+    @Transactional
+    public void deleteMenu(int menuCode) {
+        try {
+            Menu menu = menuRepository.getReferenceById(menuCode);
+            menuRepository.delete(menu);
+        } catch (EntityNotFoundException e) {
+            throw new RuntimeException("이미 삭제되었거나 존재하지 않는 가맹점입니다.");
+        }
+    }
 }
