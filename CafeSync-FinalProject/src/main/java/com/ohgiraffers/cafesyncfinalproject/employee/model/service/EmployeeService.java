@@ -22,7 +22,7 @@ public class EmployeeService {
         return workers.stream()
                 .map(worker -> {
                     EmployeeDTO employeeDTO = modelMapper.map(worker, EmployeeDTO.class);
-                    System.out.println("employeeDTO = " + employeeDTO);
+//                    System.out.println("employeeDTO = " + employeeDTO);
                     return employeeDTO;
                 })
                 .collect(Collectors.toList());
