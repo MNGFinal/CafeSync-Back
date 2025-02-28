@@ -1,5 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.menu.model.entity;
 
+import com.ohgiraffers.cafesyncfinalproject.menu.model.dto.MenuDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,4 +47,13 @@ public class Menu {
     public void toggleOrderableStatus() {
         this.orderableStatus = !this.orderableStatus;
     }
+
+    // ✅ 값 변경을 위한 메서드 (Setter 대신 사용)
+    public void updateMenu(MenuDTO menuDTO) {
+        this.menuNameKo = menuDTO.getMenuNameKo();
+        this.menuNameEN = menuDTO.getMenuNameEN();
+        this.menuDetail = menuDTO.getMenuDetail();
+        this.menuImage = menuDTO.getMenuImage();
+    }
+
 }
