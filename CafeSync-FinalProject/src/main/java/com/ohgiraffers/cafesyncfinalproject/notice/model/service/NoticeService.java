@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -132,4 +134,37 @@ public class NoticeService {
         }
         return accountOptional.get().getAuthority();
     }
+
+    @Transactional
+    public Object updateNotice(NoticeInsertDTO noticeInsertDTO) {
+
+        // 엔티티가 존재하는지 확인
+        Optional<NoticeInsert> noticeUpdateOptional = noticeInsertRepository.findById(noticeInsertDTO.getNoticeCode());
+
+        if (!noticeUpdateOptional.isPresent()) {
+            return "공지사항이 존재하지 않습니다.";
+        }
+
+        NoticeInsert noticeUpdate = noticeUpdateOptional.get();
+
+        // 한국 시간대(KST)로 변환
+        ZonedDateTime koreaTime = noticeInsertDTO.getNoticeDate().atZone(ZoneId.of("Asia/Seoul"));
+
+        // NoteUpdate 객체의 각 필드 갱신
+        noticeUpdate
+                .noticeTitle(noticeInsertDTO.getNoticeTitle())
+                .noticeDate(koreaTime.toLocalDateTime())  // 한국 시간으로 설정
+                .noticeContent(noticeInsertDTO.getNoticeContent())
+                .attachment(noticeInsertDTO.getAttachment());
+
+        // 수정된 NoticeInsert 엔티티 저장
+        noticeInsertRepository.save(noticeUpdate);
+
+        return "공지사항 업데이트 성공";
+    }
+
+    public void deleteNotice(int noticeCode) {
+        noticeInsertRepository.deleteById(noticeCode);
+    }
+
 }

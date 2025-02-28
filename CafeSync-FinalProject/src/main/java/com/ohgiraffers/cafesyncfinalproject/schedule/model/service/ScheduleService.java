@@ -35,13 +35,11 @@ public class ScheduleService {
 
     @Transactional
     public List<ScheduleDTO> saveSchedule(List<ScheduleDTO> scheduleList) {
-        System.out.println("서비스 도착 scheduleList = " + scheduleList);
         List<Schedule> schedules = scheduleList.stream()
                 .map(dto -> modelMapper.map(dto, Schedule.class))
                 .collect(Collectors.toList());
 
         List<Schedule> savedSchedules = scheduleRepository.saveAll(schedules);
-        System.out.println("서비스 처리 완료 savedSchedules = " + savedSchedules);
 
         // 저장된 스케줄을 다시 조회해서 employee 정보 포함사키기
         List<Integer> empCodes = savedSchedules.stream()
@@ -59,7 +57,6 @@ public class ScheduleService {
                 .map(schedule -> {
                     ScheduleDTO scheduleDTO = modelMapper.map(schedule, ScheduleDTO.class);
                     scheduleDTO.setEmpName(empNameMap.get(schedule.getEmpCode()));
-                    System.out.println("DTO로 변환 완료 scheduleDTO = " + scheduleDTO);
                     return scheduleDTO;
                 })
                 .collect(Collectors.toList());
@@ -82,15 +79,12 @@ public class ScheduleService {
         Schedule schedule = modelMapper.map(scheduleDTO, Schedule.class);
         Schedule savedSchedule = scheduleRepository.save(schedule);
         ScheduleDTO savedScheduleDTO = modelMapper.map(savedSchedule, ScheduleDTO.class);
-        System.out.println("서비스 savedScheduleDTO = " + savedScheduleDTO);
-//        savedScheduleDTO.setEmpName(schedule.getEmployee().getEmpName());
-//        System.out.println("empName 추가 = " + savedScheduleDTO);
 
         return savedScheduleDTO;
     }
 
-//    public void deleteSchedule(Long scheduleCode) {
-//        scheduleRepository.deleteById(scheduleCode);  // DB에서 삭제
-//    }
+    public void deleteSchedule(int scheduleCode) {
+        scheduleRepository.deleteById(scheduleCode);
+    }
 
 }
