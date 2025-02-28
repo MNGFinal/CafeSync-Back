@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,8 +22,10 @@ public class ComplainService {
     private final EmpRepository empRepository;
     private final ModelMapper modelMapper;
 
-    public List<ComplainDTO> findByFranCode(int franCode) {
-        List<Complain> complains = complainRepository.findByFranCode(franCode);
+    public List<ComplainDTO> findByFranCodeAndDateRange(int franCode, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDay = startDate.atStartOfDay();
+        LocalDateTime endDay = endDate.atTime(23, 59, 59);
+        List<Complain> complains = complainRepository.findByFranCodeAndComplainDateBetween(franCode, startDay, endDay);
 
         return complains.stream()
                 .map(complain -> modelMapper.map(complain, ComplainDTO.class))

@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -35,14 +35,14 @@ public class ComplainController {
     @GetMapping("/fran/complain/{franCode}")
     public ResponseEntity<ResponseDTO> findComplainsByFranCode(
             @PathVariable int franCode,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDateTime startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDateTime endDate) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         if (franCode <= 0 || startDate == null || endDate == null) {
             return ResponseEntity.badRequest()
                     .body(new ResponseDTO(HttpStatus.BAD_REQUEST, "유효하지 않은 형식으로 잘못된 요청", null));
         }
 
-        List<ComplainDTO> complains = complainService.findByFranCode(franCode);
+        List<ComplainDTO> complains = complainService.findByFranCodeAndDateRange(franCode, startDate, endDate);
         if (complains.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseDTO(HttpStatus.NOT_FOUND, "컴플레인을 찾을 수 없음", null));
