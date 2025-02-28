@@ -14,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Builder(toBuilder = true)
+//@Builder(toBuilder = true)
 public class Schedule {
 
     @Id

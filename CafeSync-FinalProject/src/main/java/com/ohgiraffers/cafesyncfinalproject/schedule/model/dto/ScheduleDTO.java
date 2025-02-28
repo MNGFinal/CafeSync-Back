@@ -24,13 +24,13 @@ public class ScheduleDTO {
     @Schema(description = "스케줄 대상자")
     private int empCode;
 
-    @Schema(description = "스케줄 구분", example = "0=휴가, 1=오픈, 2=미들, 3=마감")
+    @Schema(description = "스케줄 구분", example = "1=오픈, 2=미들, 3=마감, 4=휴가")
     private int scheduleDivision;
 
     @Schema(description = "가맹점 코드")
     private int franCode;
 
     // JOIN
-    @Schema(description = "직원 이름")
+    @Schema(description = "직원 이름(Employee join data)")
     private String empName;
 }
