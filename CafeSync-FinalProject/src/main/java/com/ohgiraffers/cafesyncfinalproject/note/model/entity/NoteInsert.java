@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "tbl_note")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
