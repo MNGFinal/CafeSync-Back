@@ -60,12 +60,17 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // ✅ 로그인 & 회원가입은 누구나 접근 가능
-
                         .requestMatchers("/api/login", "/api/register", "/api/find-id/**", "/api/find-pass/**", "/api/fran/**", "/api/hq/**").permitAll()
 
-                        // ✅ 권한 설정
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // 관리자만 접근 가능
-                        .requestMatchers("/api/user/**").hasRole("USER") // 사용자만 접근 가능
+                        // ✅ WebSocket 엔드포인트는 인증 없이 접근 가능하도록 허용
+                        .requestMatchers("/ws/chat/**").permitAll()
+
+                        // ✅ 채팅 API는 JWT 인증 필요
+                        .requestMatchers("/api/chat/**").permitAll()
+
+                        // ✅ 관리자 & 사용자 권한 설정
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/user/**").hasRole("USER")
 
                         // ✅ 나머지 모든 요청은 로그인해야 접근 가능
                         .anyRequest().authenticated()
