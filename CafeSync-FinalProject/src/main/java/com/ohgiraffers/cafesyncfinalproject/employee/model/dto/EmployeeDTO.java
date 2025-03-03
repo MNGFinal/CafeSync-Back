@@ -43,6 +43,8 @@ public class EmployeeDTO {
     @Schema(description = "직급 코드", example = "21")
     private int jobCode;
 
+    private JobDTO job;
+
     @Schema(description = "급여 단위", example = "1500000")
     private int salaryUnit;
 
@@ -51,4 +53,6 @@ public class EmployeeDTO {
 
     @Schema(description = "담당 가맹점 코드 (FK)", example = "1000")
     private int franCode;
+
+    private FranChiseJoinDTO franChise;
 }

@@ -34,11 +34,9 @@ public class Employee {
     private String email;
 
     @Column(name = "hire_date")
-    @Temporal(TemporalType.DATE) // 날짜 타입 지정
     private Date hireDate;
 
     @Column(name = "retire_date")
-    @Temporal(TemporalType.DATE)
     private Date retireDate;
 
     @Column(name = "memo", columnDefinition = "TEXT")
@@ -55,4 +53,8 @@ public class Employee {
 
     @Column(name = "fran_code")
     private Integer franCode;
+
+    public Employee(Integer empCode) { // ✅ empCode만 받는 생성자 추가
+        this.empCode = empCode;
+    }
 }
