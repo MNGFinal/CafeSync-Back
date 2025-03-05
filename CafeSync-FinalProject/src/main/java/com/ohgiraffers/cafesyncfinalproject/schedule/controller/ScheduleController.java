@@ -110,4 +110,37 @@ public class ScheduleController {
                     .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류", null));
         }
     }
+
+    @Operation(
+            summary = "스케줄 삭제",
+            description = "가맹점이 기존 스케줄을 삭제합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "스케줄 삭제 성공"),
+                    @ApiResponse(responseCode = "400", description = "유효하지 않은 형식으로 잘못된 요청"),
+                    @ApiResponse(responseCode = "404", description = "스케줄을 찾을 수 없음"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류")
+            }
+    )
+    @DeleteMapping("/schedule/{scheduleCode}")
+    public ResponseEntity<ResponseDTO> deleteSchedule(@PathVariable int scheduleCode) {
+        if (scheduleCode <= 0) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseDTO(HttpStatus.BAD_REQUEST, "유효하지 않은 형식으로 잘못된 요청", null));
+        }
+
+        try {
+            ScheduleDTO deleteSchedule = scheduleService.findByScheduleCode(scheduleCode);
+            if (deleteSchedule == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ResponseDTO(HttpStatus.NOT_FOUND, "삭제할 스케줄을 찾을 수 없음", null));
+            }
+
+            scheduleService.deleteSchedule(scheduleCode);
+
+            return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "스케줄 삭제 성공", deleteSchedule));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류", null));
+        }
+    }
 }

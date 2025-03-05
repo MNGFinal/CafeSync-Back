@@ -16,23 +16,25 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        // ✅ 프론트엔드에서 온 요청 허용 (특정 도메인 or 모든 요청 허용)
+        // ✅ 프론트엔드에서 온 요청 허용 (WebSocket 포함)
         config.setAllowedOriginPatterns(List.of("http://localhost:3000", "http://127.0.0.1:3000"));
 
         // ✅ 쿠키, 인증 정보 포함 허용
         config.setAllowCredentials(true);
 
-        // ✅ 허용할 HTTP 메서드 지정
+        // ✅ 허용할 HTTP 메서드 지정 (WebSocket handshake인 OPTIONS 포함)
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        // ✅ 모든 요청 헤더 허용 (Authorization 포함)
-        config.setAllowedHeaders(List.of("*"));
+        // ✅ WebSocket 요청 헤더도 허용 (Authorization 포함)
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
 
         // ✅ 응답 헤더 노출 허용 (Authorization 포함)
-        config.setExposedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization"));
 
-        // ✅ 모든 경로에 대해 CORS 적용
+        // ✅ WebSocket 엔드포인트에도 CORS 적용
+        source.registerCorsConfiguration("/ws/**", config);
         source.registerCorsConfiguration("/**", config);
+
         return new CorsFilter(source);
     }
 }

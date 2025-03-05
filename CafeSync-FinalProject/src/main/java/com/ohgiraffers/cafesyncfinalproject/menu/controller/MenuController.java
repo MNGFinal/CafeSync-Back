@@ -45,13 +45,13 @@ public class MenuController {
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK,"메뉴 조회 성공", menuList));
     }
 
+    // Sold Out 기능 (가맹점)
     @Operation(summary = "메뉴 Sold Out",
             description = "메뉴 Sold Out 설정 기능",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Sold Out 설정 성공"),
                     @ApiResponse(responseCode = "400", description = "Sold Out 설정 실패")
             })
-    // Sold Out 기능 (가맹점)
     @PutMapping("/fran/menus/{menuCode}")
     public ResponseEntity<ResponseDTO> menuSold(@PathVariable("menuCode") int menuCode) {
 
@@ -79,6 +79,9 @@ public class MenuController {
     @PutMapping("/hq/menus/{menuCode}")
     public ResponseEntity<ResponseDTO> modifyMenu(@PathVariable int menuCode, @RequestBody MenuDTO menuDTO) {
 
+        System.out.println("프론트에서 받은 메뉴코드 = " + menuCode);
+        System.out.println("단종 데이터 확인 = " + menuDTO);
+
         MenuDTO menuData = menuService.modifyMenu(menuDTO);
 
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK,"메뉴 수정 성공", menuData));
@@ -101,5 +104,23 @@ public class MenuController {
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "메뉴 삭제 성공", null));
     }
 
+    // 메뉴 등록 (본사)
+    @Operation(summary = "메뉴 등록(본사)",
+               description = "본사 메뉴 등록 기능",
+               responses = {
+                       @ApiResponse(responseCode = "200", description = "메뉴 등록 성공"),
+                       @ApiResponse(responseCode = "400", description = "잘못된 요청 (유효성 검사 실패)"),
+                       @ApiResponse(responseCode = "401", description = "인증 실패 (로그인이 필요함)"),
+                       @ApiResponse(responseCode = "403", description = "권한 없음 (관리자만 등록 가능)"),
+                       @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+               })
+    @PostMapping("hq/menus/regist")
+    public ResponseEntity<ResponseDTO> registMenu(@RequestBody MenuDTO menuDTO) {
 
+        MenuDTO menuData = menuService.registMenu(menuDTO);
+
+        System.out.println("menuData = " + menuData);
+
+        return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "메뉴 등록 성공", menuData));
+    }
 }

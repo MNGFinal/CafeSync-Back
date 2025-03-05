@@ -81,4 +81,15 @@ public class MenuService {
             throw new RuntimeException("이미 삭제되었거나 존재하지 않는 가맹점입니다.");
         }
     }
+
+    @Transactional
+    public MenuDTO registMenu(MenuDTO menuDTO) {
+
+        Menu menu = modelMapper.map(menuDTO, Menu.class);
+
+        Menu savedMenu = menuRepository.save(menu);
+
+        return modelMapper.map(savedMenu, MenuDTO.class);
+
+    }
 }

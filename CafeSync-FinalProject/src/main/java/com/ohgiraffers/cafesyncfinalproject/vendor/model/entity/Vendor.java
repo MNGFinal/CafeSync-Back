@@ -1,10 +1,7 @@
 package com.ohgiraffers.cafesyncfinalproject.vendor.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Entity(name = "findVendor")
 @Table(name = "tbl_vendor")
@@ -12,12 +9,12 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @ToString
+@Builder
 public class Vendor {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ven_code")
-    private int venCode;  // 기본 키, auto increment
+    private int venCode;
 
     @Column(name = "ven_name", length = 255, nullable = false)
     private String venName;
