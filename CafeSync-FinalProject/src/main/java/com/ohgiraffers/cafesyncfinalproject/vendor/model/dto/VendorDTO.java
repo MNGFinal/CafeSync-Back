@@ -9,6 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
+@Builder
 public class VendorDTO {
 
     @Schema(description = "거래처 코드", example = "10001")

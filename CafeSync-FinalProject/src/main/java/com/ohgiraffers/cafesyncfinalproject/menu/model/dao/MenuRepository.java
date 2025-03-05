@@ -10,9 +10,10 @@ public interface MenuRepository extends JpaRepository<Menu, Integer> {
     List<Menu> findByCategoryCode(int categoryCode);
 
     @Query(
-        value="select m from Menu m where m.categoryCode =:categoryCode and m.menuNameKo like %:query%"
+            value = "select m from Menu m where m.categoryCode = :categoryCode and m.menuNameKo like concat('%', :query, '%')"
     )
     List<Menu> findByCategoryCodeAndMenuName(int categoryCode, String query);
+
 
     @Query(
 //   여기에 쿼리문 작성
