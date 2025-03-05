@@ -79,6 +79,9 @@ public class MenuController {
     @PutMapping("/hq/menus/{menuCode}")
     public ResponseEntity<ResponseDTO> modifyMenu(@PathVariable int menuCode, @RequestBody MenuDTO menuDTO) {
 
+        System.out.println("프론트에서 받은 메뉴코드 = " + menuCode);
+        System.out.println("단종 데이터 확인 = " + menuDTO);
+
         MenuDTO menuData = menuService.modifyMenu(menuDTO);
 
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK,"메뉴 수정 성공", menuData));
