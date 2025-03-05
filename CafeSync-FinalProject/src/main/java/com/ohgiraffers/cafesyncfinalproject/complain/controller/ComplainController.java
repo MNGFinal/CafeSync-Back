@@ -51,4 +51,26 @@ public class ComplainController {
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "컴플레인 조회 성공", complains));
     }
 
+    @Operation(
+            summary = "컴플레인 등록",
+            description = "가맹점이 컴플레인을 신규 등록하여 목록에 표시합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "컴플레인 등록 성공"),
+                    @ApiResponse(responseCode = "400", description = "유효하지 않은 형식으로 잘못된 요청")
+            }
+    )
+    @PostMapping("/fran/complain")
+    public ResponseEntity<ResponseDTO> registComplain(@RequestBody ComplainDTO complain) {
+        if (complain == null) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseDTO(HttpStatus.BAD_REQUEST, "유효하지 않은 형식으로 잘못된 요청", null));
+        }
+
+        ComplainDTO savedComplain = complainService.saveComplain(complain);
+        savedComplain.setEmpName(complain.getEmpName());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseDTO(HttpStatus.CREATED, "컴플레인 등록 성공", savedComplain));
+
+    }
+
 }

@@ -31,4 +31,11 @@ public class ComplainService {
                 .map(complain -> modelMapper.map(complain, ComplainDTO.class))
                 .collect(Collectors.toList());
     }
+
+    public ComplainDTO saveComplain(ComplainDTO complain) {
+        Complain addComplain = modelMapper.map(complain, Complain.class);
+
+        Complain savedComplain = complainRepository.save(addComplain);
+        return modelMapper.map(savedComplain, ComplainDTO.class);
+    }
 }
