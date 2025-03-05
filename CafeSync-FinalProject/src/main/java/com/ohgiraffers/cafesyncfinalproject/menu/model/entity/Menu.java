@@ -54,6 +54,6 @@ public class Menu {
         this.menuNameEN = menuDTO.getMenuNameEN();
         this.menuDetail = menuDTO.getMenuDetail();
         this.menuImage = menuDTO.getMenuImage();
+        this.disconStatus = menuDTO.getDisconStatus();  // 단종 여부도 업데이트
     }
-
 }
