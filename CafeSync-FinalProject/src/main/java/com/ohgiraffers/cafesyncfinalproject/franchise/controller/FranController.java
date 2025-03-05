@@ -94,12 +94,9 @@ public class FranController {
             @PathVariable int franCode,  // ✅ URL에서 franCode 값 받기
             @RequestBody FranDTO franDTO) { // ✅ 요청 바디에서 DTO 받기
 
-        FranDTO franData = franService.modifyFran(franDTO);
-
-//        franDTO.setFranCode(franCode);
-
         System.out.println("franDTO에 뭐가들었을까?" + franDTO);
 
+        FranDTO franData = franService.modifyFran(franDTO);
 
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "가맹점 수정 완료", franData));
     }
