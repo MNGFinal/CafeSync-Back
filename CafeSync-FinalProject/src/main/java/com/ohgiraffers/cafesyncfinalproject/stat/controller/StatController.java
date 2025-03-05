@@ -7,13 +7,12 @@ import com.ohgiraffers.cafesyncfinalproject.stat.model.service.StatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -35,9 +34,28 @@ public class StatController {
 
 
     @GetMapping("/sales/summary")
-    public ResponseEntity<SalesSummaryDTO> getSalesSummary() {
-        return ResponseEntity.ok(statService.getSalesSummary());
+    public ResponseEntity<SalesSummaryDTO> getSalesSummary(
+            @RequestParam Integer franCode,  // ✅ 가맹점 코드
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,  // ✅ 시작 날짜
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate  // ✅ 종료 날짜
+    ) {
+
+        System.out.println("🟢 API 요청 받음 - franCode: " + franCode + ", 기간: " + startDate + " ~ " + endDate);
+
+
+        // ✅ 날짜가 없으면 기본값 설정 (이번 달 1일 ~ 오늘)
+        if (startDate == null) {
+            startDate = LocalDate.now().withDayOfMonth(1); // 이번 달 1일
+        }
+        if (endDate == null) {
+            endDate = LocalDate.now(); // 오늘 날짜
+        }
+
+        System.out.println("🟢 API 요청 - franCode: " + franCode + ", 기간: " + startDate + " ~ " + endDate);
+
+        return ResponseEntity.ok(statService.getSalesSummary(franCode, startDate, endDate));
     }
+
 
 
 }
