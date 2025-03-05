@@ -88,16 +88,16 @@ public class FranService {
 
         System.out.println("DTO 에서 찾은 Entity 값 = " + foundFran);
 
-
-
-
-
         // 2️⃣ 학원 스타일의 Builder 패턴 적용하여 값 변경
-        foundFran = foundFran.franName(franDTO.getFranName())
-                  .franPhone(franDTO.getFranPhone())
-                  .memo(franDTO.getMemo())
-                  .empCode(franDTO.getEmpCode())
-                  .builder();
+        foundFran = foundFran
+                .franName(franDTO.getFranName())
+                .franAddr(franDTO.getFranAddr())       // 주소 업데이트
+                .franPhone(franDTO.getFranPhone())
+                .franImage(franDTO.getFranImage())     // 이미지 업데이트
+                .memo(franDTO.getMemo())
+                .empCode(franDTO.getEmpCode())
+                .builder();
+
 
         // 3️⃣ save() 호출 → JPA가 ID를 보고 UPDATE 수행
         Fran updatedFran = franRepository.save(foundFran);
@@ -105,8 +105,6 @@ public class FranService {
         // 4️⃣ DTO 변환 후 반환
         return modelMapper.map(updatedFran, FranDTO.class);
     }
-
-
 }
 
 
