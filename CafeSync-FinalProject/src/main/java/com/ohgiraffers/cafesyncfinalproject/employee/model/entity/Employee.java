@@ -11,6 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @ToString
+@Builder
 public class Employee {
 
     @Id
@@ -25,7 +26,7 @@ public class Employee {
     private String profileImage;
 
     @Column(name = "addr", length = 255)
-    private String address;
+    private String addr;
 
     @Column(name = "phone", length = 255)
     private String phone;
