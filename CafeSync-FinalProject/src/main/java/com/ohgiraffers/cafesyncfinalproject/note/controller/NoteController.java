@@ -55,6 +55,8 @@ public class NoteController {
     @PostMapping("/notes")
     public ResponseEntity<ResponseDTO> insertNote(@RequestBody NoteInsertDTO noteDTO, Principal principal) {
 
+        System.out.println("noteDTO = " + noteDTO);
+
         try {
             int noteCode = noteService.insertNote(noteDTO, principal);
             return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "노트 등록 성공", noteCode));
@@ -68,6 +70,8 @@ public class NoteController {
     @Operation(summary = "바리스타 노트 수정", description = "바리스타 노트 수정")
     @PutMapping(value = "/notes")
     public ResponseEntity<ResponseDTO> updateNote(@RequestBody NoteInsertDTO noteInsertDTO) {
+
+        System.out.println("noteInsertDTO = " + noteInsertDTO);
 
         return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "바리스타 노트 수정 성공",  noteService.updateNote(noteInsertDTO)));
     }
