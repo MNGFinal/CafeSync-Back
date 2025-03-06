@@ -43,6 +43,7 @@ public class ComplainController {
         }
 
         List<ComplainDTO> complains = complainService.findByFranCodeAndDateRange(franCode, startDate, endDate);
+        System.out.println("complains = " + complains);
         if (complains.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseDTO(HttpStatus.NOT_FOUND, "컴플레인을 찾을 수 없음", null));
