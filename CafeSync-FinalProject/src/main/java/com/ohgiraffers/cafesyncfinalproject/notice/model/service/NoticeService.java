@@ -18,6 +18,7 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,15 +35,16 @@ public class NoticeService {
     public List<NoticeDTO> getAllNotices() {
         List<Notice> notices = noticeRepository.findAll();
         return notices.stream()
+                .sorted(Comparator.comparingInt(Notice::getNoticeCode).reversed()) // 내림차순 정렬
                 .map(notice -> new NoticeDTO(
                         notice.getNoticeCode(),
                         notice.getNoticeTitle(),
                         notice.getNoticeContent(),
                         notice.getNoticeDate(),
                         notice.getNoticeViews(),
-                        (notice.getAccount() != null) ? notice.getAccount().getUserId() : null, // account 에서 userId 가져오기
+                        (notice.getAccount() != null) ? notice.getAccount().getUserId() : null, // account에서 userId 가져오기
                         (notice.getAccount() != null && notice.getAccount().getEmployee() != null) ? notice.getAccount().getEmployee().getEmpName() : null, // empName 가져오기
-                        notice.getAttachment() // 조회수 추가
+                        notice.getAttachment() // 첨부파일
                 ))
                 .collect(Collectors.toList());
     }
