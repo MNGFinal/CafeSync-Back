@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,7 @@ public class NoteService {
 
     public List<NoteDTO> getAllNotes() {
         List<Note> notes = noteRepository.findAll();
-        return notes.stream()
+        return notes.stream().sorted(Comparator.comparingInt(Note::getNoteCode).reversed())
                 .map(note -> new NoteDTO(
                         note.getNoteCode(),
                         note.getNoteTitle(),
