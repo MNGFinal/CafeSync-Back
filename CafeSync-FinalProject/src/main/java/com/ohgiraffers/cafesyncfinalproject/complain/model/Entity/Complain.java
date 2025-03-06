@@ -40,7 +40,7 @@ public class Complain {
     private int empCode;
 
     // JOIN
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "emp_code", referencedColumnName = "emp_code", insertable = false, updatable = false)
     private Employee employee;
 
