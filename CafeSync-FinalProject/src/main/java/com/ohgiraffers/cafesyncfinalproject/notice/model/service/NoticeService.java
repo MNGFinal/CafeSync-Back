@@ -97,33 +97,19 @@ public class NoticeService {
     }
 
     @Transactional
-    public int insertNotice(NoticeInsertDTO noticeInsertDTO, Principal principal) {
-        // 사용자 정보 조회
-        Optional<Account> accountOptional = noticeAccountRepository.findById(principal.getName());
-        if (accountOptional.isEmpty()) {
-            throw new RuntimeException("사용자 정보가 없습니다.");
-        }
-        Account account = accountOptional.get();
-
-        // 권한이 1인 사용자만 등록 가능
-        if (account.getAuthority() != 1) {
-            throw new RuntimeException("등록 권한이 없습니다.");
-        }
-
-        // DTO -> Entity 변환
+    public int insertNotice(NoticeInsertDTO noticeInsertDTO) {
+        // 🔹 DTO → Entity 변환 후 저장
         NoticeInsert noticeInsert = NoticeInsert.builder()
                 .noticeTitle(noticeInsertDTO.getNoticeTitle())
                 .noticeContent(noticeInsertDTO.getNoticeContent())
-                .noticeDate(LocalDateTime.now())  // 공지사항 작성 시간을 현재 시간으로 설정
-                .noticeViews(0)  // 초기 조회수는 0
-                .userId(principal.getName())  // 사용자 ID는 principal에서 가져옴
+                .noticeDate(LocalDateTime.now())  // 현재 시간 설정
+                .noticeViews(0)  // 초기 조회수 0
+                .userId(noticeInsertDTO.getUserId())  // 프론트에서 받은 userId 설정
                 .attachment(noticeInsertDTO.getAttachment())
                 .build();
 
-        // 공지사항 저장
+        // 🔹 공지사항 저장 후 PK 반환
         NoticeInsert savedNotice = noticeInsertRepository.save(noticeInsert);
-
-        // 저장된 공지사항의 noticeCode 반환
         return savedNotice.getNoticeCode();
     }
 

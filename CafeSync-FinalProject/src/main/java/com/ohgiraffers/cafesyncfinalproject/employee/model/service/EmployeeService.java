@@ -11,6 +11,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,19 +61,23 @@ public class EmployeeService {
     }
 
 
-    // 전체 직원 불러오기 (조인 정보 포함)
     public List<EmployeeDTO> findAllEmployees() {
         List<Object[]> results = empRepository.findAllEmployeeWithJoins();
-        return results.stream().map(record -> {
 
+        if (results == null) {
+            return new ArrayList<>(); // ⚠ 빈 리스트 반환하여 NullPointerException 방지
+        }
+
+        List<EmployeeDTO> employeeDTOList = results.stream().map(record -> {
             EmployeeDTO dto = new EmployeeDTO();
             dto.setEmpCode((Integer) record[0]);
             dto.setEmpName((String) record[1]);
             dto.setProfileImage((String) record[2]);
-            // 프로필 사진 URL 변환
+
             if (dto.getProfileImage() != null) {
                 dto.setProfileImage(firebaseStorageService.convertGsUrlToHttp(dto.getProfileImage()));
             }
+
             dto.setAddr((String) record[3]);
             dto.setPhone((String) record[4]);
             dto.setEmail((String) record[5]);
@@ -83,19 +89,20 @@ public class EmployeeService {
             dto.setSalary((Integer) record[11]);
             dto.setFranCode((Integer) record[12]);
 
-            // JobDTO 매핑 (예시: job_name)
             JobDTO jobDto = new JobDTO();
             jobDto.setJobName((String) record[13]);
             dto.setJob(jobDto);
 
-            // FranChiseJoinDTO 매핑 (예시: fran_name)
             FranChiseJoinDTO franDto = new FranChiseJoinDTO();
             franDto.setFranName((String) record[14]);
             dto.setFranChise(franDto);
 
             return dto;
         }).collect(Collectors.toList());
+
+        return employeeDTOList;
     }
+
 
     // 직원 업데이트
     @Transactional
