@@ -37,8 +37,9 @@ public class Notice {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
     private Account account;
 
-    @Column(name = "attachment")
+    @Column(name = "attachment", columnDefinition = "LONGTEXT")
     private String attachment;
+
 
     // ✅ 조회수 증가 메서드 추가
     public void increaseViewCount() {

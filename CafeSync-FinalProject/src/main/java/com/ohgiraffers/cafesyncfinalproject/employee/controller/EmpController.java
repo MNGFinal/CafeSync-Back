@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -36,21 +37,29 @@ public class EmpController {
     @GetMapping("/employees")
     public ResponseEntity<ResponseDTO> getEmployeeList() {
         try {
+            System.out.println("📢 직원 목록 조회 API 호출됨!");
             List<EmployeeDTO> employeeList = employeeService.findAllEmployees();
+            System.out.println("📢 컨트롤러에서 받은 employeeList: " + employeeList);
+            System.out.println("📢 컨트롤러에서 받은 employeeList 개수: " + employeeList.size());
 
             if (employeeList == null || employeeList.isEmpty()) {
+                System.out.println("❌ 직원 목록이 비어 있음");
                 return ResponseEntity
                         .status(HttpStatus.NO_CONTENT)
-                        .body(new ResponseDTO(HttpStatus.NO_CONTENT, "직원 목록을 찾을 수 없습니다.", null));
+                        .body(new ResponseDTO(HttpStatus.NO_CONTENT, "직원 목록을 찾을 수 없습니다.", new ArrayList<>()));
             }
 
-            return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "전체 직원 목록이 성공적으로 조회되었습니다.", employeeList));
+            ResponseDTO responseDTO = new ResponseDTO(HttpStatus.OK, "전체 직원 목록이 성공적으로 조회되었습니다.", employeeList);
+            System.out.println("📢 ResponseDTO 생성됨: " + responseDTO);
+            return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버에 오류가 발생하였습니다.", null));
         }
     }
+
 
     // 직원 정보 업데이트
     @Operation(summary = "직원 정보 업데이트", description = "주어진 직원 정보를 업데이트합니다.")

@@ -1,10 +1,12 @@
 package com.ohgiraffers.cafesyncfinalproject.stat.model.dto;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Getter
+@ToString
 public class SalesSummaryDTO {
     private SalesDataDTO today;
     private SalesDataDTO week;
