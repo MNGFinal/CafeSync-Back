@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,8 +39,10 @@ public class TaxService {
         if (row[5] instanceof java.sql.Timestamp) {
             slipDate = ((java.sql.Timestamp) row[5]).toLocalDateTime();
         } else {
-            slipDate = LocalDateTime.parse(row[5].toString());
+            LocalDate date = LocalDate.parse(row[5].toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            slipDate = date.atStartOfDay(); // 2025-02-28 00:00:00
         }
+
 
         // ✅ VendorDTO 생성
         VendorDTO vendor = new VendorDTO(
