@@ -3,6 +3,7 @@ package com.ohgiraffers.cafesyncfinalproject.promotion.model.service;
 import com.ohgiraffers.cafesyncfinalproject.promotion.model.dao.PromotionRepository;
 import com.ohgiraffers.cafesyncfinalproject.promotion.model.dto.PromotionDTO;
 import com.ohgiraffers.cafesyncfinalproject.promotion.model.entity.Promotion;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -22,5 +23,12 @@ public class PromotionService {
         return promotions.stream()
                 .map(promotion -> modelMapper.map(promotion, PromotionDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public PromotionDTO savePromotion(PromotionDTO promotion) {
+        Promotion registPromotion = modelMapper.map(promotion, Promotion.class);
+        Promotion savedPromotion = promotionRepository.save(registPromotion);
+        return modelMapper.map(savedPromotion, PromotionDTO.class);
     }
 }
