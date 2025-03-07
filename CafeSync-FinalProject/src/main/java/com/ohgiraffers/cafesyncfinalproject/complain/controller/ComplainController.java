@@ -21,7 +21,7 @@ import java.util.List;
 @Tag(name = "ComplainController", description = "가맹점&본사 - 컴플레인")
 public class ComplainController {
 
-    public final ComplainService complainService;
+    private final ComplainService complainService;
 
     @Operation(
             summary = "가맹점 별 컴플레인 조회",
