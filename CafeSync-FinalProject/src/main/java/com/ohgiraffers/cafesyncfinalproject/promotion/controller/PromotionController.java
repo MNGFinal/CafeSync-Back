@@ -7,9 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,6 +28,17 @@ public class PromotionController {
         }
         System.out.println("promotions = " + promotions);
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "프로모션 조회 성공", promotions));
+    }
+
+    @PostMapping("/promotion")
+    public ResponseEntity<ResponseDTO> registPromotion(@RequestBody PromotionDTO promotion) {
+        if (promotion == null) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseDTO(HttpStatus.BAD_REQUEST, "유효하지 않은 형식으로 잘못된 요청", null));
+        }
+        PromotionDTO savedPromotion = promotionService.savePromotion(promotion);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseDTO(HttpStatus.CREATED, "프로모션 등록 성공", savedPromotion));
     }
 
 }
