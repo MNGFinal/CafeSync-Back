@@ -1,8 +1,13 @@
 package com.ohgiraffers.cafesyncfinalproject.stat.model.dto;
 
-import lombok.ToString;
 
+import lombok.*;
+
+@Getter
+@Setter
 @ToString
+@NoArgsConstructor
+
 public class MonthlySalesDTO {
     private String month;
     private Long sales;
