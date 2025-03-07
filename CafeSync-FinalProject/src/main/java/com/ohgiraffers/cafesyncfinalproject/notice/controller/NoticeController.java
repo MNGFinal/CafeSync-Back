@@ -33,6 +33,9 @@ public class NoticeController {
     public ResponseEntity<ResponseDTO> getAllNotices(){
 
         List<NoticeDTO> getAllNotices = noticeService.getAllNotices();
+
+        System.out.println("getAllNotices = " + getAllNotices);
+
         return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK,"공지사항 전체 조회성공",getAllNotices));
     }
 

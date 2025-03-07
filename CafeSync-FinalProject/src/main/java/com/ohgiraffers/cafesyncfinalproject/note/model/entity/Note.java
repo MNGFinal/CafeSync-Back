@@ -30,7 +30,7 @@ public class Note {
     @Column(name = "note_detail")
     private String noteDetail;
 
-    @Column(name = "attachment")
+    @Column(name = "attachment", columnDefinition = "LONGTEXT")
     private String attachment;
 
     @ManyToOne(fetch = FetchType.LAZY)
