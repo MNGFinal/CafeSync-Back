@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.sql.Date;
+import java.util.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -111,6 +111,30 @@ public class StatService {
                         ((Number) obj[1]).intValue()  // 판매량
                 ))
                 .collect(Collectors.toList());
+    }
+
+
+
+
+
+    // ✅ 가맹점별 매출 순위 조회
+    public List<StoreSalesDTO> getTopStores(Date startDate, Date endDate) {
+        return statRepository.findTopStoresBySales(startDate, endDate);
+    }
+
+    // ✅ 메뉴별 판매 순위 조회
+    public List<MenuSalesDTO> getTopMenus(Date startDate, Date endDate) {
+        return statRepository.findTopMenusBySales(startDate, endDate);
+    }
+
+    // ✅ 오늘의 매출 순위 조회
+    public List<TodaySalesDTO> getTodaySales(Date today) {
+        return statRepository.findTodaySalesByStore(today);
+    }
+
+    // ✅ 검색
+    public List<MonthlySalesDTO> getMonthlySales(Date startDate, Date endDate) {
+        return statRepository.findMonthlySales(startDate, endDate);
     }
 
 }

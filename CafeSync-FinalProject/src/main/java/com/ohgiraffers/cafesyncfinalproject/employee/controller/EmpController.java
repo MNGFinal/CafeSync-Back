@@ -21,10 +21,13 @@ public class EmpController {
 
     private final EmployeeService employeeService;
 
-    // 아직 진행 안하는 중
+    // 가맹점별 직원 조회
     @GetMapping("/employee/workers/{franCode}")
     public List<EmployeeDTO> findWorkersByFranCode(@PathVariable int franCode) {
         List<EmployeeDTO> workers = employeeService.findByFranCode(franCode);
+
+        System.out.println("workers = " + workers);
+
         return workers;
     }
 
@@ -49,4 +52,45 @@ public class EmpController {
         }
     }
 
+    // 직원 정보 업데이트
+    @Operation(summary = "직원 정보 업데이트", description = "주어진 직원 정보를 업데이트합니다.")
+    @PutMapping("/employee")
+    public ResponseEntity<ResponseDTO> updateEmployee(@RequestBody EmployeeDTO employeeDTO) {
+        try {
+            boolean isUpdated = employeeService.updateEmployee(employeeDTO);
+
+            if (!isUpdated) {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(new ResponseDTO(HttpStatus.BAD_REQUEST, "직원 정보 업데이트 실패", null));
+            }
+
+            return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "직원 정보가 성공적으로 업데이트되었습니다.", employeeDTO));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버에 오류가 발생하였습니다.", null));
+        }
+    }
+
+    // ✅ 직원 등록 (POST)
+    @Operation(summary = "직원 등록", description = "신규 직원을 등록합니다.")
+    @PostMapping("/employee")
+    public ResponseEntity<ResponseDTO> createEmployee(@RequestBody EmployeeDTO employeeDTO) {
+        try {
+            boolean isCreated = employeeService.createEmployee(employeeDTO);
+
+            if (!isCreated) {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(new ResponseDTO(HttpStatus.BAD_REQUEST, "직원 등록 실패", null));
+            }
+
+            return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "직원 등록 완료", employeeDTO));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+        }
+    }
 }

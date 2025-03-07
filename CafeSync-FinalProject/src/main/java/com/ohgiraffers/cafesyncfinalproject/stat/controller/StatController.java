@@ -1,9 +1,7 @@
 package com.ohgiraffers.cafesyncfinalproject.stat.controller;
 
 import com.ohgiraffers.cafesyncfinalproject.common.ResponseDTO;
-import com.ohgiraffers.cafesyncfinalproject.stat.model.dto.MenuSalesDTO;
-import com.ohgiraffers.cafesyncfinalproject.stat.model.dto.SalesSummaryDTO;
-import com.ohgiraffers.cafesyncfinalproject.stat.model.dto.StatDTO;
+import com.ohgiraffers.cafesyncfinalproject.stat.model.dto.*;
 import com.ohgiraffers.cafesyncfinalproject.stat.model.service.StatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,13 +16,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/fran")
+@RequestMapping("/api")
 @Tag(name = "통계 관련 스웨거 연동")
 public class StatController {
 
@@ -48,7 +45,7 @@ public class StatController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류")
             }
     )
-    @GetMapping("/sales/{franCode}")
+    @GetMapping("/fran/sales/{franCode}")
     public ResponseEntity<ResponseDTO> salesStat(@PathVariable int franCode) {
 
         List<StatDTO> salesStat = statService.getSalesStat(franCode);
@@ -71,7 +68,7 @@ public class StatController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류")
             }
     )
-    @GetMapping("/sales/summary")
+    @GetMapping("/fran/sales/summary")
     public ResponseEntity<SalesSummaryDTO> getSalesSummary(
             @RequestParam Integer franCode,  // ✅ 가맹점 코드
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,  // ✅ 시작 날짜
@@ -96,7 +93,7 @@ public class StatController {
 
     // 메뉴별 통계
     @Operation(summary = "메뉴별 판매량 조회", description = "특정 가맹점에서 특정 기간 동안 판매된 메뉴 개수를 조회합니다.")
-    @GetMapping("/sales/menuStat")
+    @GetMapping("/fran/sales/menuStat")
     public ResponseEntity<List<MenuSalesDTO>> getMenuSales(
             @RequestParam Integer franCode,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -104,5 +101,44 @@ public class StatController {
 
         return ResponseEntity.ok(statService.getMenuSales(franCode, startDate, endDate));
     }
+
+
+
+
+
+
+
+
+    // ✅ 가맹점별 매출 순위 조회
+    @GetMapping("/hq/top-stores")
+    public ResponseEntity<List<StoreSalesDTO>> getTopStores(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        return ResponseEntity.ok(statService.getTopStores(startDate, endDate));
+    }
+
+    // ✅ 메뉴별 판매 순위 조회
+    @GetMapping("/hq/top-menus")
+    public ResponseEntity<List<MenuSalesDTO>> getTopMenus(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        return ResponseEntity.ok(statService.getTopMenus(startDate, endDate));
+    }
+
+    // ✅ 오늘의 매출 순위 조회
+    @GetMapping("/hq/today-sales")
+    public ResponseEntity<List<TodaySalesDTO>> getTodaySales(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date today) {
+        return ResponseEntity.ok(statService.getTodaySales(today));
+    }
+
+    // 검색
+    @GetMapping("/hq/monthly-sales")
+    public ResponseEntity<List<MonthlySalesDTO>> getMonthlySales(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        return ResponseEntity.ok(statService.getMonthlySales(startDate, endDate));
+    }
+
 
 }

@@ -56,4 +56,5 @@ public class Menu {
         this.menuImage = menuDTO.getMenuImage();
         this.disconStatus = menuDTO.getDisconStatus();  // 단종 여부도 업데이트
     }
+
 }
