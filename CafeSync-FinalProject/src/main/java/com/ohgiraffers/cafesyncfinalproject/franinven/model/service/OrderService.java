@@ -1,18 +1,30 @@
 package com.ohgiraffers.cafesyncfinalproject.franinven.model.service;
 
 import com.ohgiraffers.cafesyncfinalproject.firebase.FirebaseStorageService;
+import com.ohgiraffers.cafesyncfinalproject.franinven.model.dao.FranInvenRepository;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dao.OrderDetailRepository;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dao.OrderRepository;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.InventoryDTO;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.OrderDTO;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.dto.OrderDetailDTO;
+import com.ohgiraffers.cafesyncfinalproject.franinven.model.entity.FranInven;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.entity.Order;
 import com.ohgiraffers.cafesyncfinalproject.franinven.model.entity.OrderDetail;
-import jakarta.transaction.Transactional;
+import com.ohgiraffers.cafesyncfinalproject.inventory.model.dao.InventoryRepository;
+
+
+import com.ohgiraffers.cafesyncfinalproject.inventory.model.entity.Inventory; // ✅ 올바른 패키지로 변경
+import jakarta.persistence.EntityManager;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.sql.Timestamp;  // ✅ 올바른 Timestamp import
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,7 +73,7 @@ public class OrderService {
     // 발주 목록 조회
     public List<OrderDTO> getFranOrderList(int franCode) {
         // 1️⃣ 가맹점 코드로 발주 목록 조회
-        List<Order> orders = orderRepository.findByFranCode(franCode);
+        List<Order> orders = orderRepository.findByFranCodeOrderByOrderDateDesc(franCode);
 
         // 2️⃣ 발주 코드 목록을 가져옴
         List<Integer> orderCodes = orders.stream()
@@ -174,5 +186,87 @@ public class OrderService {
             // ✅ 2. 발주 삭제 (tbl_order)
             orderRepository.deleteById(orderCode);
         }
+    }
+
+    // 본사 가맹점 발주 리스트 가져오기
+    @Transactional(readOnly = true)
+    public List<OrderDTO> getHQOrderList() {
+        List<Object[]> orderRows = orderRepository.findAllOrdersWithFranchise();
+        Map<Integer, OrderDTO> orderMap = new HashMap<>();
+
+        for (Object[] row : orderRows) {
+            try {
+                if (row == null || row.length < 11) {
+                    System.out.println("❌ row 데이터가 비정상적: " + Arrays.toString(row));
+                    continue;
+                }
+
+                int orderCode = ((Number) row[0]).intValue();
+                int franCode = ((Number) row[1]).intValue();
+                String franName = (String) row[2];
+                Date orderDate = row[3] instanceof java.sql.Timestamp
+                        ? new java.util.Date(((java.sql.Timestamp) row[3]).getTime())
+                        : null;
+                int orderStatus = ((Number) row[4]).intValue();
+
+                // ✅ 기존 OrderDTO가 있는지 확인 (없으면 생성)
+                OrderDTO order = orderMap.get(orderCode);
+                if (order == null) {
+                    order = new OrderDTO(orderCode, franCode, franName, orderDate, orderStatus, new ArrayList<>());
+                    orderMap.put(orderCode, order);
+                }
+
+                // ✅ orderDetails 추가 (null 체크)
+                if (row[5] != null) {
+                    int orderDetailId = ((Number) row[5]).intValue();
+                    String invenCode = (String) row[6];
+                    int orderQty = ((Number) row[7]).intValue();
+                    String invenName = (String) row[8];
+                    String invenImage = (String) row[9];
+
+                    // ✅ Firebase Storage URL 변환
+                    if (invenImage != null) {
+                        invenImage = firebaseStorageService.convertGsUrlToHttp(invenImage);
+                    }
+
+                    // ✅ expirationDate 변환 (LocalDateTime)
+                    LocalDateTime expirationDate = row[10] instanceof java.sql.Timestamp
+                            ? ((java.sql.Timestamp) row[10]).toLocalDateTime()
+                            : null;
+
+                    // ✅ InventoryDTO 생성 (VendorDTO 필요하면 추가)
+                    InventoryDTO inventory = InventoryDTO.builder()
+                            .invenCode(invenCode)
+                            .invenName(invenName)
+                            .expirationDate(expirationDate)
+                            .invenImage(invenImage) // ✅ 변환된 이미지 적용
+                            .build();
+
+                    OrderDetailDTO orderDetail = OrderDetailDTO.builder()
+                            .orderDetailId(orderDetailId)
+                            .orderCode(orderCode)
+                            .invenCode(invenCode)
+                            .orderQty(orderQty)
+                            .inventory(inventory) // ✅ InventoryDTO 추가
+                            .build();
+
+                    order.getOrderDetails().add(orderDetail);
+                }
+
+            } catch (Exception e) {
+                System.out.println("❌ 변환 오류 발생: " + Arrays.toString(row));
+                e.printStackTrace();
+            }
+        }
+
+        return new ArrayList<>(orderMap.values());
+    }
+
+
+
+    // 발주 승인 반려 업데이트
+    @Transactional
+    public boolean updateOrderStatus(int orderCode, int status) {
+        return orderRepository.updateOrderStatus(orderCode, status) > 0;
     }
 }

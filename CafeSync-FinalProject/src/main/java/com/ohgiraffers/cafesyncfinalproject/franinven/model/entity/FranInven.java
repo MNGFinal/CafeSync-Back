@@ -46,4 +46,18 @@ public class FranInven {
         this.orderQty = orderQty;
         this.recommQty = recommQty;
     }
+
+    // ✅ 새로운 재고를 추가할 때 사용하는 생성자 추가
+    public FranInven(int franCode, Inventory inventory, int stockQty, Date lastIn) {
+        this.franCode = franCode;
+        this.inventory = inventory;
+        this.stockQty = stockQty;
+        this.lastIn = lastIn;
+        this.confirmed = 1; // 승인된 상태로 저장
+    }
+
+    // ✅ stockQty 증가하는 메서드 추가 (Setter 대신 사용)
+    public void increaseStock(int quantity) {
+        this.stockQty += quantity;
+    }
 }

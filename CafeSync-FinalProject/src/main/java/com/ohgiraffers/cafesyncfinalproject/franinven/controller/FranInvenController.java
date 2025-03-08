@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/fran")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 @Tag(name = "가맹점 재고 관리", description = "가맹점의 재고 및 발주를 관리하는 API") // ✅ Swagger 그룹 태그 추가
 public class FranInvenController {
@@ -34,14 +34,14 @@ public class FranInvenController {
     @Operation(summary = "가맹점 재고 목록 조회", description = "로그인한 가맹점의 재고 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "재고 목록 조회 성공",
             content = @Content(schema = @Schema(implementation = FranInvenDTO.class)))
-    @GetMapping("/inven/{franCode}")
+    @GetMapping("/fran/inven/{franCode}")
     public List<FranInvenDTO> getInventoryByFranCode(
             @Parameter(description = "가맹점 코드", example = "101") @PathVariable int franCode) {
         return franInvenService.findByFranCode(franCode);
     }
 
     @Operation(summary = "재고 수량 업데이트", description = "가맹점의 재고 수량을 업데이트합니다.")
-    @PutMapping("/inven/update")
+    @PutMapping("/fran/inven/update")
     public ResponseEntity<String> invenUpdate(
             @Parameter(description = "업데이트할 재고 정보", required = true)
             @RequestBody List<FranInvenDTO> request) {
@@ -50,7 +50,7 @@ public class FranInvenController {
     }
 
     @Operation(summary = "재고 삭제", description = "가맹점의 재고 항목을 삭제합니다.")
-    @DeleteMapping("/inven/delete")
+    @DeleteMapping("/fran/inven/delete")
     public ResponseEntity<String> invenDelete(
             @Parameter(description = "삭제할 재고 정보", required = true)
             @RequestBody List<FranInvenDTO> request) {
@@ -59,7 +59,7 @@ public class FranInvenController {
     }
 
     @Operation(summary = "입출고 내역 조회", description = "가맹점의 입출고 내역을 조회합니다.")
-    @GetMapping("/inout/list/{franCode}")
+    @GetMapping("/fran/inout/list/{franCode}")
     public ResponseEntity<List<InOutDTO>> getInOutList(
             @Parameter(description = "가맹점 코드", example = "101") @PathVariable int franCode) {
         List<InOutDTO> inOutList = inOutService.getInOutList(franCode);
@@ -67,7 +67,7 @@ public class FranInvenController {
     }
 
     @Operation(summary = "출고 등록", description = "가맹점의 출고 내역을 등록합니다.")
-    @PostMapping("/inout/out-register")
+    @PostMapping("/fran/inout/out-register")
     public ResponseEntity<Map<String, Object>> insertOutRegister(
             @Parameter(description = "출고할 재고 목록", required = true)
             @RequestBody List<InOutInventoryJoinDTO> request) {
@@ -84,7 +84,7 @@ public class FranInvenController {
     }
 
     @Operation(summary = "입고 승인", description = "입고 요청을 승인합니다.")
-    @PutMapping("/inout/approve")
+    @PutMapping("/fran/inout/approve")
     public ResponseEntity<String> inoutApprove(
             @Parameter(description = "승인할 입고 내역", required = true)
             @RequestBody List<InOutDTO> request) {
@@ -102,7 +102,7 @@ public class FranInvenController {
                             content = @Content(mediaType = "application/json"))
             }
     )
-    @PutMapping("/inout/cancel")
+    @PutMapping("/fran/inout/cancel")
     public ResponseEntity<String> inoutCancel(@RequestBody List<InOutDTO> request) {
         try {
             // ✅ 입고 취소 서비스 호출
@@ -116,7 +116,7 @@ public class FranInvenController {
     }
 
     @Operation(summary = "발주 신청", description = "가맹점이 발주를 신청합니다.")
-    @PostMapping("/order/request")
+    @PostMapping("/fran/order/request")
     public ResponseEntity<String> insertOrder(
             @Parameter(description = "발주 신청할 상품 목록", required = true)
             @RequestBody List<OrderDTO> orderRequest) {
@@ -127,7 +127,7 @@ public class FranInvenController {
     }
 
     @Operation(summary = "발주 신청 내역 조회", description = "가맹점의 발주 신청 내역을 조회합니다.")
-    @GetMapping("/order/{franCode}")
+    @GetMapping("/fran/order/{franCode}")
     public ResponseEntity<ResponseDTO> getFranOrderList(
             @Parameter(description = "가맹점 코드", example = "101") @PathVariable("franCode") int franCode) {
         try {
@@ -164,7 +164,7 @@ public class FranInvenController {
             @ApiResponse(responseCode = "500", description = "서버 내부 오류 발생",
                     content = @Content(schema = @Schema(implementation = ResponseDTO.class)))
     })
-    @PutMapping("/order/update")
+    @PutMapping("/fran/order/update")
     public ResponseEntity<ResponseDTO> updateFranOrderList(
             @Parameter(description = "업데이트할 발주 내역 목록", required = true)
             @RequestBody List<OrderDetailDTO> request) {
@@ -209,7 +209,7 @@ public class FranInvenController {
                             content = @Content(mediaType = "application/json"))
             }
     )
-    @DeleteMapping("/order/delete")
+    @DeleteMapping("/fran/order/delete")
     public ResponseEntity<String> deleteOrderDetails(@RequestBody List<OrderDetailDTO> orderDetails) {
         try {
             orderService.deleteOrderDetails(orderDetails);
@@ -232,7 +232,7 @@ public class FranInvenController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDTO.class)))
             }
     )
-    @DeleteMapping("/order/fran-order")
+    @DeleteMapping("/fran/order/fran-order")
     public ResponseEntity<ResponseDTO> deleteFranOrderList(@RequestBody List<OrderDTO> request) {
         try {
             orderService.deleteFranOrderList(request);
@@ -240,6 +240,50 @@ public class FranInvenController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "발주 삭제 중 오류 발생!", null));
+        }
+    }
+
+    // 본사(모든 가맹점 발주 리스트 조회)
+    @GetMapping("/hq/order")
+    public ResponseEntity<ResponseDTO> hqOrderList() {
+
+        System.out.println("가맹점 발주 리스트 조회 실행됨...");
+        try {
+            // OrderService에 본사용 메서드가 있다고 가정합니다.
+            List<OrderDTO> orderList = orderService.getHQOrderList();
+
+            System.out.println("orderList = " + orderList);
+
+            if (orderList == null || orderList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                        .body(new ResponseDTO(HttpStatus.NO_CONTENT, "조회된 발주 내역이 없습니다.", null));
+            }
+
+            return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "전체 발주 내역 조회 성공", orderList));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+        }
+    }
+
+    @Operation(summary = "본사 발주 승인/반려", description = "본사가 가맹점의 발주를 승인 또는 반려합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "발주 상태 변경 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    @PutMapping("/hq/orders/{orderCode}/{status}")
+    public ResponseEntity<ResponseDTO> updateOrderStatus(
+            @Parameter(description = "발주 코드") @PathVariable int orderCode,
+            @Parameter(description = "상태값 (1: 승인, 2: 반려)") @PathVariable int status) {
+
+        boolean isUpdated = orderService.updateOrderStatus(orderCode, status);
+
+        if (isUpdated) {
+            return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "발주 상태 변경 성공", null));
+        } else {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseDTO(HttpStatus.BAD_REQUEST, "발주 상태 변경 실패", null));
         }
     }
 }
