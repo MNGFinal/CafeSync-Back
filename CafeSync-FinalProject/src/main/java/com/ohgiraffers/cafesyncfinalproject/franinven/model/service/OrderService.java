@@ -192,7 +192,7 @@ public class OrderService {
     @Transactional(readOnly = true)
     public List<OrderDTO> getHQOrderList() {
         List<Object[]> orderRows = orderRepository.findAllOrdersWithFranchise();
-        Map<Integer, OrderDTO> orderMap = new HashMap<>();
+        Map<Integer, OrderDTO> orderMap = new LinkedHashMap<>();
 
         for (Object[] row : orderRows) {
             try {
