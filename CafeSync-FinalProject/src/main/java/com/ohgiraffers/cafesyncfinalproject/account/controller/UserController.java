@@ -67,7 +67,6 @@ public class UserController {
     )
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody UserDTO userDTO) {
-
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userDTO.getUserId(), userDTO.getUserPass())
@@ -75,24 +74,33 @@ public class UserController {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            String accessToken = jwtUtil.generateToken(userDTO.getUserId(), ACCESS_TOKEN_EXPIRATION);
+            // ✅ 15분 (밀리초)
+            long expiresInMillis = ACCESS_TOKEN_EXPIRATION; // 15분 = 15 * 60 * 1000
+
+            String accessToken = jwtUtil.generateToken(userDTO.getUserId(), expiresInMillis);
             String refreshToken = jwtUtil.generateToken(userDTO.getUserId(), REFRESH_TOKEN_EXPIRATION);
 
+            // ✅ Redis에 Refresh Token 저장 (기존 로직)
             redisTemplate.opsForValue().set("refresh:" + userDTO.getUserId(), refreshToken, REFRESH_TOKEN_EXPIRATION, TimeUnit.MILLISECONDS);
 
+            // ✅ UserLoginDTO (기존 로직)
             UserLoginDTO user = userService.findUserLoginDetails(userDTO.getUserId());
 
             Map<String, Object> response = new HashMap<>();
             response.put("accessToken", accessToken);
             response.put("refreshToken", refreshToken);
-            response.put("user", user); // ✅ UserLoginDTO로 반환!
+            response.put("user", user);
+
+            // ✅ 만료까지 남은 시간(밀리초)도 함께 내려줌
+            response.put("expiresIn", expiresInMillis);
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            e.printStackTrace(); // ✅ 예외 메시지 확인
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", "로그인 실패"));
         }
     }
+
 
 
     // ✅ Refresh Token을 이용한 Access Token 재발급 (세션 방식)
