@@ -16,12 +16,4 @@ public class MonthlySalesDTO {
         this.month = month;
         this.sales = sales;
     }
-
-    public String getMonth() {
-        return month;
-    }
-
-    public Long getSales() {
-        return sales;
-    }
 }

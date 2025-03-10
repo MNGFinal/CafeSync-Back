@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -117,24 +117,22 @@ public class StatService {
 
 
 
-    // ✅ 가맹점별 매출 순위 조회
-    public List<StoreSalesDTO> getTopStores(Date startDate, Date endDate) {
-        return statRepository.findTopStoresBySales(startDate, endDate);
+    public List<StoreSalesDTO> getTopStores(LocalDate startDate, LocalDate endDate) {
+        return statRepository.findTopStoresBySales(Date.valueOf(startDate).toLocalDate(), Date.valueOf(endDate).toLocalDate());
     }
 
-    // ✅ 메뉴별 판매 순위 조회
-    public List<MenuSalesDTO> getTopMenus(Date startDate, Date endDate) {
-        return statRepository.findTopMenusBySales(startDate, endDate);
+    public List<MenuSalesDTO> getTopMenus(LocalDate startDate, LocalDate endDate) {
+        return statRepository.findTopMenusBySales(startDate, endDate);  // 🔥 변환 없이 그대로 사용
     }
 
-    // ✅ 오늘의 매출 순위 조회
-    public List<TodaySalesDTO> getTodaySales(Date today) {
-        return statRepository.findTodaySalesByStore(today);
+
+    public List<TodaySalesDTO> getTodaySales(LocalDate today) {
+        return statRepository.findTodaySalesByStore(today); // ✅ 변환 없이 그대로 전달
     }
 
-    // ✅ 검색
-    public List<MonthlySalesDTO> getMonthlySales(Date startDate, Date endDate) {
-        return statRepository.findMonthlySales(startDate, endDate);
+    public List<MonthlySalesDTO> getMonthlySales(LocalDate startDate, LocalDate endDate) {
+        return statRepository.findMonthlySales(Date.valueOf(startDate).toLocalDate(), Date.valueOf(endDate).toLocalDate());
     }
+
 
 }
