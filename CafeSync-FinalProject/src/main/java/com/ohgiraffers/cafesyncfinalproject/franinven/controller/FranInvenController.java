@@ -130,6 +130,7 @@ public class FranInvenController {
     @GetMapping("/fran/order/{franCode}")
     public ResponseEntity<ResponseDTO> getFranOrderList(
             @Parameter(description = "가맹점 코드", example = "101") @PathVariable("franCode") int franCode) {
+
         try {
             if (franCode <= 0) {
                 return ResponseEntity

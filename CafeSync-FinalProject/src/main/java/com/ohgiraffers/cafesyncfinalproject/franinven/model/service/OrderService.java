@@ -17,6 +17,8 @@ import com.ohgiraffers.cafesyncfinalproject.inventory.model.entity.Inventory; //
 import jakarta.persistence.EntityManager;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,41 +37,55 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final FirebaseStorageService firebaseStorageService;
+    private final StringRedisTemplate redisTemplate; // ✅ Redis 연결
 
-    // 발주 신청
     @Transactional
     public boolean insertOrder(List<OrderDTO> orderDTOList) {
         try {
-            // ✅ 여러 개의 발주 요청을 처리해야 함
-            for (OrderDTO orderDTO : orderDTOList) {
+            ValueOperations<String, String> ops = redisTemplate.opsForValue();
+            String franCode = String.valueOf(orderDTOList.get(0).getFranCode());
+            String cacheKey = "franCode:" + franCode; // ✅ 가맹점 코드 캐싱 키 생성
 
-                // ✅ 1. 먼저 tbl_order에 저장 (order_code 자동 생성)
+            // ✅ Redis에서 가맹점 코드 확인
+            String cachedFranCode = ops.get(cacheKey);
+
+            if (cachedFranCode == null) {
+                // Redis에 없으면 새로 저장
+                ops.set(cacheKey, franCode, 10, TimeUnit.MINUTES);
+                System.out.println("✅ Redis에 가맹점 코드 저장: " + franCode);
+            } else {
+                // Redis에서 가져온 franCode 사용 (로그만 확인)
+                System.out.println("✅ Redis에서 가맹점 코드 조회: " + cachedFranCode);
+            }
+
+            // ✅ 여러 개의 발주 요청 처리
+            for (OrderDTO orderDTO : orderDTOList) {
                 Order savedOrder = orderRepository.save(
                         Order.builder()
-                                .franCode(orderDTO.getFranCode())
+                                .franCode(Integer.parseInt(franCode)) // ✅ Redis에서 가져온 franCode 사용
                                 .orderDate(orderDTO.getOrderDate())
                                 .orderStatus(orderDTO.getOrderStatus())
                                 .build()
                 );
 
-                // ✅ 2. tbl_order_detail에 저장 (위에서 생성한 order_code 사용)
                 List<OrderDetail> orderDetails = orderDTO.getOrderDetails().stream()
                         .map(detailDTO -> OrderDetail.builder()
-                                .order(savedOrder) // ✅ FK 매핑
+                                .order(savedOrder)
                                 .invenCode(detailDTO.getInvenCode())
                                 .orderQty(detailDTO.getOrderQty())
                                 .build())
                         .collect(Collectors.toList());
 
-                orderDetailRepository.saveAll(orderDetails); // ✅ 배치 저장
+                orderDetailRepository.saveAll(orderDetails);
             }
 
-            return true; // 성공
+            return true; // ✅ 성공적으로 DB 저장
         } catch (Exception e) {
             e.printStackTrace();
-            return false; // 실패
+            return false; // ✅ 실패
         }
     }
+
 
     // 발주 목록 조회
     public List<OrderDTO> getFranOrderList(int franCode) {
