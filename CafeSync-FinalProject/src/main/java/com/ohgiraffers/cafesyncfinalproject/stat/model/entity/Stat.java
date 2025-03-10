@@ -22,8 +22,8 @@ public class Stat {
     @Column(name = "sales_code")
     private int salesCode;
 
-    @Column(name = "sales_date")
-    private LocalDate salesDate;
+    @Column(name = "sales_date", columnDefinition = "DATE")
+    private LocalDate salesDate;  // ✅ `LocalDate` 확인 (필요하면 `LocalDateTime`으로 변경)
 
     @Column(name = "sales_amount")
     private int salesAmount;

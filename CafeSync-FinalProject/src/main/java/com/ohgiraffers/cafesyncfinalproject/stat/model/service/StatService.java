@@ -1,5 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.stat.model.service;
 
+import com.ohgiraffers.cafesyncfinalproject.firebase.FirebaseStorageService;
 import com.ohgiraffers.cafesyncfinalproject.stat.model.dao.StatRepository;
 import com.ohgiraffers.cafesyncfinalproject.stat.model.dto.*;
 import com.ohgiraffers.cafesyncfinalproject.stat.model.entity.Stat;
@@ -22,6 +23,7 @@ public class StatService {
 
     private final StatRepository statRepository;
     private final ModelMapper modelMapper;
+    private final FirebaseStorageService firebaseStorageService; // ✅ Firebase 서비스 추가!
 
     private List<MonthlySalesDTO> getMonthlySalesData(List<Object[]> results) {
         List<MonthlySalesDTO> monthlySalesList = new ArrayList<>();
@@ -118,7 +120,17 @@ public class StatService {
 
 
     public List<StoreSalesDTO> getTopStores(LocalDate startDate, LocalDate endDate) {
-        return statRepository.findTopStoresBySales(Date.valueOf(startDate).toLocalDate(), Date.valueOf(endDate).toLocalDate());
+        List<StoreSalesDTO> storeSales = statRepository.findTopStoresBySales(startDate, endDate);
+
+        // ✅ Firebase 이미지 URL 변환 적용!
+        return storeSales.stream()
+                .map(store -> {
+                    if (store.getFranImage() != null && !store.getFranImage().isEmpty()) {
+                        store.setFranImage(firebaseStorageService.convertGsUrlToHttp(store.getFranImage()));
+                    }
+                    return store;
+                })
+                .collect(Collectors.toList());
     }
 
     public List<MenuSalesDTO> getTopMenus(LocalDate startDate, LocalDate endDate) {

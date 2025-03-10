@@ -68,12 +68,19 @@ public interface StatRepository extends JpaRepository<Stat, Integer> {
 
 
 
-    @Query("SELECT new com.ohgiraffers.cafesyncfinalproject.stat.model.dto.StoreSalesDTO(f.franCode, f.franName, SUM(s.salesAmount)) " +
+    @Query("SELECT new com.ohgiraffers.cafesyncfinalproject.stat.model.dto.StoreSalesDTO(" +
+            "f.franCode, f.franName, SUM(s.salesAmount), COALESCE(f.franImage, '')) " +  // ✅ 필드 순서 DTO와 맞추기
             "FROM Stat s JOIN Fran f ON s.franCode = f.franCode " +
             "WHERE s.salesDate BETWEEN :startDate AND :endDate " +
-            "GROUP BY f.franCode, f.franName " +
+            "GROUP BY f.franCode, f.franName, f.franImage " +
             "ORDER BY SUM(s.salesAmount) DESC")
     List<StoreSalesDTO> findTopStoresBySales(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+
+
+
+
+
 
     @Query("SELECT new com.ohgiraffers.cafesyncfinalproject.stat.model.dto.MenuSalesDTO(m.menuNameKo, COUNT(s.menuCode)) " +
             "FROM Stat s JOIN Menu m ON s.menuCode = m.menuCode " +
