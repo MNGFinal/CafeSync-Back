@@ -17,6 +17,7 @@ import com.ohgiraffers.cafesyncfinalproject.inventory.model.entity.Inventory; //
 import jakarta.persistence.EntityManager;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -37,52 +39,61 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final FirebaseStorageService firebaseStorageService;
-    private final StringRedisTemplate redisTemplate; // ✅ Redis 연결
+    private final RedisTemplate<String, String> redisTemplate;
 
+    // 발주 신청
     @Transactional
     public boolean insertOrder(List<OrderDTO> orderDTOList) {
         try {
             ValueOperations<String, String> ops = redisTemplate.opsForValue();
             String franCode = String.valueOf(orderDTOList.get(0).getFranCode());
-            String cacheKey = "franCode:" + franCode; // ✅ 가맹점 코드 캐싱 키 생성
+            String cacheKey = "franCode:" + franCode;
 
-            // ✅ Redis에서 가맹점 코드 확인
-            String cachedFranCode = ops.get(cacheKey);
-
-            if (cachedFranCode == null) {
-                // Redis에 없으면 새로 저장
+            // ✅ Redis 캐싱 최적화 (중복 get 호출 제거)
+            if (!Boolean.TRUE.equals(redisTemplate.hasKey(cacheKey))) {
                 ops.set(cacheKey, franCode, 10, TimeUnit.MINUTES);
-                System.out.println("✅ Redis에 가맹점 코드 저장: " + franCode);
-            } else {
-                // Redis에서 가져온 franCode 사용 (로그만 확인)
-                System.out.println("✅ Redis에서 가맹점 코드 조회: " + cachedFranCode);
             }
 
-            // ✅ 여러 개의 발주 요청 처리
-            for (OrderDTO orderDTO : orderDTOList) {
-                Order savedOrder = orderRepository.save(
-                        Order.builder()
-                                .franCode(Integer.parseInt(franCode)) // ✅ Redis에서 가져온 franCode 사용
+            // ✅ 비동기 방식으로 처리 (CompletableFuture 적용)
+            CompletableFuture<List<Order>> savedOrdersFuture = CompletableFuture.supplyAsync(() -> {
+                List<Order> orders = orderDTOList.stream()
+                        .map(orderDTO -> Order.builder()
+                                .franCode(Integer.parseInt(franCode))
                                 .orderDate(orderDTO.getOrderDate())
                                 .orderStatus(orderDTO.getOrderStatus())
-                                .build()
-                );
-
-                List<OrderDetail> orderDetails = orderDTO.getOrderDetails().stream()
-                        .map(detailDTO -> OrderDetail.builder()
-                                .order(savedOrder)
-                                .invenCode(detailDTO.getInvenCode())
-                                .orderQty(detailDTO.getOrderQty())
                                 .build())
                         .collect(Collectors.toList());
+                return orderRepository.saveAll(orders); // ✅ 배치 저장
+            });
 
-                orderDetailRepository.saveAll(orderDetails);
-            }
+            // ✅ 저장된 Order 리스트 가져오기 (비동기 완료 후 처리)
+            List<Order> savedOrders = savedOrdersFuture.join();
 
-            return true; // ✅ 성공적으로 DB 저장
+            // ✅ OrderDetails도 비동기로 처리
+            CompletableFuture<Void> orderDetailsFuture = CompletableFuture.runAsync(() -> {
+                List<OrderDetail> orderDetails = new ArrayList<>();
+                for (int i = 0; i < savedOrders.size(); i++) {
+                    Order savedOrder = savedOrders.get(i);
+                    OrderDTO orderDTO = orderDTOList.get(i);
+
+                    orderDetails.addAll(orderDTO.getOrderDetails().stream()
+                            .map(detailDTO -> OrderDetail.builder()
+                                    .order(savedOrder)
+                                    .invenCode(detailDTO.getInvenCode())
+                                    .orderQty(detailDTO.getOrderQty())
+                                    .build())
+                            .collect(Collectors.toList()));
+                }
+                orderDetailRepository.saveAll(orderDetails); // ✅ 배치 저장
+            });
+
+            // ✅ 모든 작업이 끝날 때까지 대기
+            orderDetailsFuture.join();
+
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return false; // ✅ 실패
+            return false;
         }
     }
 
