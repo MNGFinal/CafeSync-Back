@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "tbl_menu")
 @AllArgsConstructor
@@ -56,5 +58,7 @@ public class Menu {
         this.menuImage = menuDTO.getMenuImage();
         this.disconStatus = menuDTO.getDisconStatus();  // 단종 여부도 업데이트
     }
+
+
 
 }

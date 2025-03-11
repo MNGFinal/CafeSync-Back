@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -112,33 +111,41 @@ public class StatController {
     // ✅ 가맹점별 매출 순위 조회
     @GetMapping("/hq/top-stores")
     public ResponseEntity<List<StoreSalesDTO>> getTopStores(
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return ResponseEntity.ok(statService.getTopStores(startDate, endDate));
     }
 
     // ✅ 메뉴별 판매 순위 조회
     @GetMapping("/hq/top-menus")
     public ResponseEntity<List<MenuSalesDTO>> getTopMenus(
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return ResponseEntity.ok(statService.getTopMenus(startDate, endDate));
     }
 
     // ✅ 오늘의 매출 순위 조회
     @GetMapping("/hq/today-sales")
     public ResponseEntity<List<TodaySalesDTO>> getTodaySales(
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date today) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate today) {
         return ResponseEntity.ok(statService.getTodaySales(today));
     }
 
-    // 검색
+    // ✅ 월별 매출 조회
     @GetMapping("/hq/monthly-sales")
     public ResponseEntity<List<MonthlySalesDTO>> getMonthlySales(
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-        return ResponseEntity.ok(statService.getMonthlySales(startDate, endDate));
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        System.out.println("📢 [DEBUG] API 호출됨 - startDate: " + startDate + ", endDate: " + endDate); // ✅ API 호출 로그
+
+        List<MonthlySalesDTO> salesData = statService.getMonthlySales(startDate, endDate);
+
+        System.out.println("📢 [DEBUG] 반환할 데이터 개수: " + salesData.size()); // ✅ 반환된 데이터 확인
+
+        return ResponseEntity.ok(salesData);
     }
+
 
 
 }

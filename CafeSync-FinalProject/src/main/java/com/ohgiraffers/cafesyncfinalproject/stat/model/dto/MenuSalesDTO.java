@@ -9,5 +9,5 @@ import lombok.*;
 @ToString
 public class MenuSalesDTO {
     private String menuName;  // ✅ 메뉴 이름
-    private int sales;  // ✅ 판매 개수
+    private long sales;  // ✅ 판매 개수
 }
