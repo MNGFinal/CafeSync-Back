@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -63,46 +63,45 @@ public interface StatRepository extends JpaRepository<Stat, Integer> {
     );
 
 
+    // ------------------------------------ 본사 통계 ------------------------------------
 
 
-
-
-
-    // ✅ 가맹점별 매출 순위 (TOP 5) - Franchise 테이블과 JOIN
-    @Query("SELECT new com.ohgiraffers.cafesyncfinalproject.stat.model.dto.StoreSalesDTO(f.franCode, f.franName, SUM(s.salesAmount)) " +
+    @Query("SELECT new com.ohgiraffers.cafesyncfinalproject.stat.model.dto.StoreSalesDTO(" +
+            "f.franCode, f.franName, SUM(s.salesAmount), COALESCE(f.franImage, '')) " +  // ✅ 필드 순서 DTO와 맞추기
             "FROM Stat s JOIN Fran f ON s.franCode = f.franCode " +
             "WHERE s.salesDate BETWEEN :startDate AND :endDate " +
-            "GROUP BY f.franCode, f.franName " +
+            "GROUP BY f.franCode, f.franName, f.franImage " +
             "ORDER BY SUM(s.salesAmount) DESC")
-    List<StoreSalesDTO> findTopStoresBySales(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+    List<StoreSalesDTO> findTopStoresBySales(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
 
-    // ✅ 메뉴별 판매 순위 (TOP 10) - Menu 테이블과 JOIN
-    @Query("SELECT new com.ohgiraffers.cafesyncfinalproject.stat.model.dto.MenuSalesDTO(m.menuNameKo, CAST(COUNT(s.menuCode) AS int)) " +
-            "FROM Stat s JOIN Menu m ON s.menuCode = m.menuCode " +
+    @Query("SELECT new com.ohgiraffers.cafesyncfinalproject.stat.model.dto.MenuSalesDTO(" +
+            "m.menuNameKo, COUNT(s)) " +
+            "FROM Stat s JOIN Menu m ON s.menuCode = m.menuCode " + // ✅ menuCode를 직접 JOIN
             "WHERE s.salesDate BETWEEN :startDate AND :endDate " +
             "GROUP BY m.menuNameKo " +
-            "ORDER BY COUNT(s.menuCode) DESC")
-    List<MenuSalesDTO> findTopMenusBySales(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+            "ORDER BY COUNT(s) DESC")
+    List<MenuSalesDTO> findTopMenusBySales(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
 
-    // ✅ 오늘의 가맹점 매출 순위 (TOP 5) - Franchise 테이블과 JOIN
+
+
     @Query("SELECT new com.ohgiraffers.cafesyncfinalproject.stat.model.dto.TodaySalesDTO(f.franCode, f.franName, SUM(s.salesAmount), s.salesDate) " +
             "FROM Stat s JOIN Franchise f ON s.franCode = f.franCode " +
-            "WHERE s.salesDate = :today " +
+            "WHERE s.salesDate = :today " +  // ✅ LocalDate 그대로 사용
             "GROUP BY f.franCode, f.franName, s.salesDate " +
             "ORDER BY SUM(s.salesAmount) DESC")
-    List<TodaySalesDTO> findTodaySalesByStore(@Param("today") Date today);
+    List<TodaySalesDTO> findTodaySalesByStore(@Param("today") LocalDate today);
 
 
-    @Query("SELECT new com.ohgiraffers.cafesyncfinalproject.stat.model.dto.MonthlySalesDTO(" +
-            "CONCAT(YEAR(s.salesDate), '-', CASE WHEN MONTH(s.salesDate) < 10 THEN CONCAT('0', MONTH(s.salesDate)) ELSE MONTH(s.salesDate) END), " +
-            "SUM(s.salesAmount)) " +
-            "FROM Stat s " +
-            "WHERE s.salesDate BETWEEN :startDate AND :endDate " +
-            "GROUP BY YEAR(s.salesDate), MONTH(s.salesDate) " +
-            "ORDER BY YEAR(s.salesDate), MONTH(s.salesDate)")
-    List<MonthlySalesDTO> findMonthlySales(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+    @Query(value = "SELECT DATE_FORMAT(s.sales_date, '%Y-%m') AS month, SUM(s.sales_amount) " +
+            "FROM tbl_sales s " + // ✅ 테이블명 변경
+            "WHERE s.sales_date BETWEEN :startDate AND :endDate " +
+            "GROUP BY month " +
+            "ORDER BY month", nativeQuery = true)
+    List<Object[]> findMonthlySales(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+
 
 
 

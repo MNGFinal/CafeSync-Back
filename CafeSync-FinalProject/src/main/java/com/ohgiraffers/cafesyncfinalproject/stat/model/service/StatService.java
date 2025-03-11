@@ -1,5 +1,6 @@
 package com.ohgiraffers.cafesyncfinalproject.stat.model.service;
 
+import com.ohgiraffers.cafesyncfinalproject.firebase.FirebaseStorageService;
 import com.ohgiraffers.cafesyncfinalproject.stat.model.dao.StatRepository;
 import com.ohgiraffers.cafesyncfinalproject.stat.model.dto.*;
 import com.ohgiraffers.cafesyncfinalproject.stat.model.entity.Stat;
@@ -9,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +23,7 @@ public class StatService {
 
     private final StatRepository statRepository;
     private final ModelMapper modelMapper;
+    private final FirebaseStorageService firebaseStorageService; // ✅ Firebase 서비스 추가!
 
     private List<MonthlySalesDTO> getMonthlySalesData(List<Object[]> results) {
         List<MonthlySalesDTO> monthlySalesList = new ArrayList<>();
@@ -117,24 +119,44 @@ public class StatService {
 
 
 
-    // ✅ 가맹점별 매출 순위 조회
-    public List<StoreSalesDTO> getTopStores(Date startDate, Date endDate) {
-        return statRepository.findTopStoresBySales(startDate, endDate);
+    public List<StoreSalesDTO> getTopStores(LocalDate startDate, LocalDate endDate) {
+        List<StoreSalesDTO> storeSales = statRepository.findTopStoresBySales(startDate, endDate);
+
+        // ✅ Firebase 이미지 URL 변환 적용!
+        return storeSales.stream()
+                .map(store -> {
+                    if (store.getFranImage() != null && !store.getFranImage().isEmpty()) {
+                        store.setFranImage(firebaseStorageService.convertGsUrlToHttp(store.getFranImage()));
+                    }
+                    return store;
+                })
+                .collect(Collectors.toList());
     }
 
-    // ✅ 메뉴별 판매 순위 조회
-    public List<MenuSalesDTO> getTopMenus(Date startDate, Date endDate) {
-        return statRepository.findTopMenusBySales(startDate, endDate);
+    public List<MenuSalesDTO> getTopMenus(LocalDate startDate, LocalDate endDate) {
+        System.out.println("📢 [DEBUG] 메뉴 판매 순위 요청: " + startDate + " ~ " + endDate); // ✅ 로그 추가
+
+        List<MenuSalesDTO> result = statRepository.findTopMenusBySales(startDate, endDate);
+        System.out.println("📢 [DEBUG] 조회된 메뉴 개수: " + result.size()); // ✅ 응답 개수 확인
+
+        return result;
     }
 
-    // ✅ 오늘의 매출 순위 조회
-    public List<TodaySalesDTO> getTodaySales(Date today) {
-        return statRepository.findTodaySalesByStore(today);
+
+    public List<TodaySalesDTO> getTodaySales(LocalDate today) {
+        return statRepository.findTodaySalesByStore(today); // ✅ 변환 없이 그대로 전달
     }
 
-    // ✅ 검색
-    public List<MonthlySalesDTO> getMonthlySales(Date startDate, Date endDate) {
-        return statRepository.findMonthlySales(startDate, endDate);
+    public List<MonthlySalesDTO> getMonthlySales(LocalDate startDate, LocalDate endDate) {
+        List<Object[]> results = statRepository.findMonthlySales(startDate, endDate);
+        return results.stream()
+                .map(obj -> new MonthlySalesDTO(
+                        (String) obj[0], // month (yyyy-MM)
+                        ((Number) obj[1]).longValue() // total sales amount
+                ))
+                .collect(Collectors.toList());
     }
+
+
 
 }

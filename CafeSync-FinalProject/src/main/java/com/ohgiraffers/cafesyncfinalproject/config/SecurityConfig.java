@@ -60,7 +60,7 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // ✅ 로그인 & 회원가입은 누구나 접근 가능
-                        .requestMatchers("/api/login", "/api/register", "/api/find-id/**", "/api/find-pass/**", "/api/fran/**", "/api/hq/**").permitAll()
+                        .requestMatchers("/api/login", "/api/register", "/api/find-id/**", "/api/find-pass/**", "/api/fran/**", "/api/hq/**", "/api/**").permitAll()
 
                         // ✅ WebSocket 엔드포인트는 인증 없이 접근 가능하도록 허용
                         .requestMatchers("/ws/chat/**").permitAll()

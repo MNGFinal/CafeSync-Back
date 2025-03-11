@@ -6,7 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.Date;
+import java.time.LocalDate;
+
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,8 +22,8 @@ public class Stat {
     @Column(name = "sales_code")
     private int salesCode;
 
-    @Column(name = "sales_date")
-    private Date salesDate;
+    @Column(name = "sales_date", columnDefinition = "DATE")
+    private LocalDate salesDate;  // ✅ `LocalDate` 확인 (필요하면 `LocalDateTime`으로 변경)
 
     @Column(name = "sales_amount")
     private int salesAmount;
@@ -32,5 +33,7 @@ public class Stat {
 
     @Column(name = "fran_code")
     private int franCode;
+
+
 
 }
