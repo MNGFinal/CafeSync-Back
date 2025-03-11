@@ -63,9 +63,7 @@ public interface StatRepository extends JpaRepository<Stat, Integer> {
     );
 
 
-
-
-
+    // ------------------------------------ 본사 통계 ------------------------------------
 
 
     @Query("SELECT new com.ohgiraffers.cafesyncfinalproject.stat.model.dto.StoreSalesDTO(" +
@@ -77,17 +75,14 @@ public interface StatRepository extends JpaRepository<Stat, Integer> {
     List<StoreSalesDTO> findTopStoresBySales(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
 
-
-
-
-
-
-    @Query("SELECT new com.ohgiraffers.cafesyncfinalproject.stat.model.dto.MenuSalesDTO(m.menuNameKo, COUNT(s.menuCode)) " +
-            "FROM Stat s JOIN Menu m ON s.menuCode = m.menuCode " +
+    @Query("SELECT new com.ohgiraffers.cafesyncfinalproject.stat.model.dto.MenuSalesDTO(" +
+            "m.menuNameKo, COUNT(s)) " +
+            "FROM Stat s JOIN Menu m ON s.menuCode = m.menuCode " + // ✅ menuCode를 직접 JOIN
             "WHERE s.salesDate BETWEEN :startDate AND :endDate " +
             "GROUP BY m.menuNameKo " +
-            "ORDER BY COUNT(s.menuCode) DESC")
+            "ORDER BY COUNT(s) DESC")
     List<MenuSalesDTO> findTopMenusBySales(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
 
 
 
@@ -99,17 +94,12 @@ public interface StatRepository extends JpaRepository<Stat, Integer> {
     List<TodaySalesDTO> findTodaySalesByStore(@Param("today") LocalDate today);
 
 
-
-
-
-
-    @Query("SELECT new com.ohgiraffers.cafesyncfinalproject.stat.model.dto.MonthlySalesDTO(" +
-            "FORMAT(s.salesDate, 'yyyy-MM'), SUM(s.salesAmount)) " +
-            "FROM Stat s " +
-            "WHERE s.salesDate BETWEEN :startDate AND :endDate " +
-            "GROUP BY FORMAT(s.salesDate, 'yyyy-MM') " +
-            "ORDER BY FORMAT(s.salesDate, 'yyyy-MM')")
-    List<MonthlySalesDTO> findMonthlySales(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    @Query(value = "SELECT DATE_FORMAT(s.sales_date, '%Y-%m') AS month, SUM(s.sales_amount) " +
+            "FROM tbl_sales s " + // ✅ 테이블명 변경
+            "WHERE s.sales_date BETWEEN :startDate AND :endDate " +
+            "GROUP BY month " +
+            "ORDER BY month", nativeQuery = true)
+    List<Object[]> findMonthlySales(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
 
 

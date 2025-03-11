@@ -134,9 +134,16 @@ public class StatController {
     // ✅ 월별 매출 조회
     @GetMapping("/hq/monthly-sales")
     public ResponseEntity<List<MonthlySalesDTO>> getMonthlySales(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return ResponseEntity.ok(statService.getMonthlySales(startDate, endDate));
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        System.out.println("📢 [DEBUG] API 호출됨 - startDate: " + startDate + ", endDate: " + endDate); // ✅ API 호출 로그
+
+        List<MonthlySalesDTO> salesData = statService.getMonthlySales(startDate, endDate);
+
+        System.out.println("📢 [DEBUG] 반환할 데이터 개수: " + salesData.size()); // ✅ 반환된 데이터 확인
+
+        return ResponseEntity.ok(salesData);
     }
 
 

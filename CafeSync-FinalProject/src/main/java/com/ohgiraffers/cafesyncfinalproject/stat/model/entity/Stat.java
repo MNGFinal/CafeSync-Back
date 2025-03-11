@@ -34,4 +34,6 @@ public class Stat {
     @Column(name = "fran_code")
     private int franCode;
 
+
+
 }

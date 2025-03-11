@@ -134,7 +134,12 @@ public class StatService {
     }
 
     public List<MenuSalesDTO> getTopMenus(LocalDate startDate, LocalDate endDate) {
-        return statRepository.findTopMenusBySales(startDate, endDate);  // 🔥 변환 없이 그대로 사용
+        System.out.println("📢 [DEBUG] 메뉴 판매 순위 요청: " + startDate + " ~ " + endDate); // ✅ 로그 추가
+
+        List<MenuSalesDTO> result = statRepository.findTopMenusBySales(startDate, endDate);
+        System.out.println("📢 [DEBUG] 조회된 메뉴 개수: " + result.size()); // ✅ 응답 개수 확인
+
+        return result;
     }
 
 
@@ -143,8 +148,15 @@ public class StatService {
     }
 
     public List<MonthlySalesDTO> getMonthlySales(LocalDate startDate, LocalDate endDate) {
-        return statRepository.findMonthlySales(Date.valueOf(startDate).toLocalDate(), Date.valueOf(endDate).toLocalDate());
+        List<Object[]> results = statRepository.findMonthlySales(startDate, endDate);
+        return results.stream()
+                .map(obj -> new MonthlySalesDTO(
+                        (String) obj[0], // month (yyyy-MM)
+                        ((Number) obj[1]).longValue() // total sales amount
+                ))
+                .collect(Collectors.toList());
     }
+
 
 
 }
