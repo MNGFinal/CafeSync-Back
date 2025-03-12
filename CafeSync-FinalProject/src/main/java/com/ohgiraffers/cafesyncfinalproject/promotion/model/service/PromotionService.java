@@ -31,4 +31,18 @@ public class PromotionService {
         Promotion savedPromotion = promotionRepository.save(registPromotion);
         return modelMapper.map(savedPromotion, PromotionDTO.class);
     }
+
+    public PromotionDTO findByPromotionCode(int promotionCode) {
+        Promotion findPromotion = promotionRepository.findByPromotionCode(promotionCode);
+        if (findPromotion != null) {
+            PromotionDTO promotionDTO = modelMapper.map(findPromotion, PromotionDTO.class);
+            return promotionDTO;
+        } else {
+            return null;
+        }
+    }
+
+    public void deletePromotion(int promotionCode) {
+        promotionRepository.deleteById(promotionCode);
+    }
 }
