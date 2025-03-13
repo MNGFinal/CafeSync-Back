@@ -24,14 +24,12 @@ public class ChatWebSocketController {
 
     @MessageMapping("/chat.sendMessage")
     public void handleMessage(@Payload ChatMessage chatMessage) {
-        System.out.println("📩 서버에서 받은 메시지: " + chatMessage);
 
         // 1. 채팅방의 참여자 목록 가져오기
         List<Integer> participants = chatRoomService.getParticipants(chatMessage.getRoomId());
 
         // 2. Redis에 메시지 저장 (기존 로직)
         chatMessageService.saveMessageToRedis(chatMessage, participants);
-        System.out.println("✅ Redis 저장 호출 완료");
 
         // 3. DB에 즉시 메시지 저장 및 ChatRead 레코드 초기화, 저장된 Chat 객체 반환
         Chat savedChat = chatMessageService.saveMessageAndInitializeReadStatus(chatMessage);
