@@ -80,10 +80,10 @@ public class UserController {
             String accessToken = jwtUtil.generateToken(userDTO.getUserId(), expiresInMillis);
             String refreshToken = jwtUtil.generateToken(userDTO.getUserId(), REFRESH_TOKEN_EXPIRATION);
 
-            // ✅ Redis에 Refresh Token 저장 (기존 로직)
+            // ✅ Redis에 Refresh Token 저장
             redisTemplate.opsForValue().set("refresh:" + userDTO.getUserId(), refreshToken, REFRESH_TOKEN_EXPIRATION, TimeUnit.MILLISECONDS);
 
-            // ✅ UserLoginDTO (기존 로직)
+            // ✅ UserLoginDTO
             UserLoginDTO user = userService.findUserLoginDetails(userDTO.getUserId());
 
             Map<String, Object> response = new HashMap<>();
