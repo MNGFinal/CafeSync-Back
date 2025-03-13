@@ -21,7 +21,7 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: redis.railway.internal
       port: 6379
       timeout : 5s
 
