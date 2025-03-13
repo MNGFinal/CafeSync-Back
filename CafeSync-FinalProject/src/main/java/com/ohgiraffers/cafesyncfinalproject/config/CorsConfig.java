@@ -17,7 +17,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // ✅ 프론트엔드에서 온 요청 허용 (WebSocket 포함)
-        config.setAllowedOriginPatterns(List.of("cafesync-front-production.up.railway.app", "http://127.0.0.1:3000"));
+        config.setAllowedOriginPatterns(List.of("https://cafesync-front-production.up.railway.app", "http://127.0.0.1:3000"));
 
         // ✅ 쿠키, 인증 정보 포함 허용
         config.setAllowCredentials(true);
