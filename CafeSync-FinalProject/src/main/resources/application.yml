@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/cafesyncdb
-    username: cafesync
-    password: cafesync
+    url: jdbc:mysql://caboose.proxy.rlwy.net:27648/cafesyncdb
+    username: ${MYSQLUSER}
+    password: ${MYSQLPASSWORD}
 
   jpa:
     show-sql: true
